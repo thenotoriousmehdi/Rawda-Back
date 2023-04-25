@@ -5,12 +5,21 @@ const mongoose = require("mongoose"); //pour ObjectId.isValid
 const ajouterCreche = async (req, res) => {
   const {
     nom,
-    location,
+    localisation,
     typeAccueil,
     joursAccueil,
+    typeEtab,
     ageAccueil,
+    pedagogie,
     langue,
     capacite,
+    placesDispo,
+    transport,
+    alimentation,
+    num,
+    mail,
+    description,
+    prop,
   } = req.body;
   //Ajouter la creche a la BD
   try {

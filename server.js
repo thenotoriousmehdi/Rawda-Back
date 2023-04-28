@@ -1,27 +1,41 @@
-const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv").config();
-const crecheRoutes = require("./routes/Creche.js");
+const express = require('express');
+const authRouter = require('./Routes/authRoutes');
+const mongoose = require('mongoose');
+const rawda = express();
+const cors = require("cors");
+const cookieParser = require('cookie-parser');
+rawda.use(express.json());
+rawda.use(cookieParser());
+rawda.use(cors());
+rawda.use(express.static('public'));
 
-//express app
-const app = express();
-
-//middleware
-app.use(express.json());
-
+/***************************************** MANGO DB CONNECTION ********************************************* */
+const dbUrl =
+"mongodb+srv://Amine:projet2cp@cluster0.sghbpjn.mongodb.net/?retryWrites=true&w=majority" // string of connection ATLAS
+const connectionParams = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(dbUrl, connectionParams)
   .then(() => {
-    app.listen(process.env.PORT, () => {
-      console.log(
-        "Connected to RAWDA db & listening on port",
-        process.env.PORT
-      );
-    });
+    console.log("CONNECTED TO  RAWDA's DATA BASE ");
   })
   .catch((error) => {
-    console.log(error);
+    console.log("ERROR WHILE CONNECTING");
   });
+ 
+/*****************************************************************************************************************************/
 
-//routes
-app.use("/Creche", crecheRoutes);
+
+
+/******************************* SERVER SIDE ****************************/
+const host = 8000;
+rawda.listen( host , ()=>{
+console.log(`Server running on port ${host}`);
+})
+/************************************************************************/
+
+rawda.use(authRouter);
+
+

@@ -10,12 +10,7 @@ const enfantsSchema = new Schema ({
     },
     prenom :{
         type: String,
-        required: true,  
-   },
-   niveau:{ /* pour connaitre le niveau a lequel on souhaite inscrire l'enfant*/
-    type: Number,
-    max: 5 ,
-    
+        required: true, 
    },
    date_naissance:{
     type: Date,

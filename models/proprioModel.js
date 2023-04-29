@@ -12,10 +12,11 @@ const proprioSchema = new Schema ({
 });
 
 /***************************************************************************** */
-                const creche = mongoose.model('proprioSchema',creche);
-                // Creation d'index pour le champ email 
-                USERS.collection.createIndex({ userID: 1 }, { unique: true }, (err) => {
-                    if (err) console.log(err);
-                });
-                module.exports=creche;
+const proprioModel = mongoose.model('proprioSchema',proprioSchema);
+// Creation d'index pour le champ email 
+proprioModel.collection.createIndex({ userID: 1 }, { unique: true }, (err) => {
+    if (err) console.log(err);
+  });
+module.exports=proprioModel;
+              
 /********************************************************************************* */

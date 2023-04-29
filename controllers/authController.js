@@ -29,32 +29,31 @@ const  createToken = ( id )=>{
 
 }
 
-exports.signup_get = (req , res)=>{
-    console.log('signupppp');
-}
-
-
-exports.logout_get = (req , res)=>{
-    console.log('lognupppp');
-}
 
 exports.signup_post = async (req , res)=>{
     console.log('SIGN IN EN COURS');
     const { nom , prenom , email , password , role } = req.body ;
     try{
     const user = await users.create({ nom , prenom , email , password , role });
+    const  { userID } = user._id ;
     const token = createToken(user._id);
+    if (req.body.role == 'parent'){
+        const parentSchema = await parent.create({ userID });
+    };
+    if (req.body.role == 'proprio'){
+        const proprioSchema = await proprio.create({ userID });
+    }
     res.cookie('jwt' , token , { httpOnly: true , maxAge: maxAge * 1000});
     res.status(201).json(user)  ;
     }
     catch (err)
     {
-
         const error = errorhndler(err);
         console.log("not signed");
         res.status(404).json({error});
     }
 }
+
 
 exports.login_post = async(req , res)=>{
     const { email , password} = req.body;

@@ -8,14 +8,14 @@ const parentSchema = new Schema ({
        ref:'users'
     },
     enfant:[{ type: Schema.Types.ObjectId , ref:'enfants'}]
-   
+
 });
 
 /***************************************************************************** */
-                const parent = mongoose.model('parentSchema',parent);
-                // Creation d'index pour le champ email 
-                USERS.collection.createIndex({ userID: 1 }, { unique: true }, (err) => {
-                    if (err) console.log(err);
-                });
-                module.exports=parent;
+const parentmodel = mongoose.model('parentSchema',parentSchema);
+// Creation d'index pour le champ email 
+parentmodel.collection.createIndex({ userID: 1 }, { unique: true }, (err) => {
+    if (err) console.log(err);
+  });
+module.exports=parentmodel;                
 /********************************************************************************* */

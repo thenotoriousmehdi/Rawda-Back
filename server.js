@@ -1,41 +1,33 @@
-const express = require('express');
-const authRouter = require('./Routes/authRoutes');
-const mongoose = require('mongoose');
-const rawda = express();
+const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
-const cookieParser = require('cookie-parser');
-rawda.use(express.json());
-rawda.use(cookieParser());
-rawda.use(cors());
-rawda.use(express.static('public'));
+const cookieParser = require("cookie-parser");
+require("dotenv").config();
+const authRoutes = require("./routes/authRoutes");
+const crecheRoutes = require("./routes/Creche.js");
 
-/***************************************** MANGO DB CONNECTION ********************************************* */
-const dbUrl =
-"mongodb+srv://Amine:projet2cp@cluster0.sghbpjn.mongodb.net/?retryWrites=true&w=majority" // string of connection ATLAS
-const connectionParams = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
+//express app
+const app = express();
+
+//middleware
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors());
+//app.use(express.static("public"));
+//app.use("/uploads",express.static("uploads"))
+
+//Connecting to the DB
 mongoose
-  .connect(dbUrl, connectionParams)
+  .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("CONNECTED TO  RAWDA's DATA BASE ");
+    app.listen(process.env.PORT, () => {
+      console.log("Connected to app db & listening on port", process.env.PORT);
+    });
   })
   .catch((error) => {
-    console.log("ERROR WHILE CONNECTING");
+    console.log(error);
   });
- 
-/*****************************************************************************************************************************/
 
+app.use("/Creche", crecheRoutes);
 
-
-/******************************* SERVER SIDE ****************************/
-const host = 8000;
-rawda.listen( host , ()=>{
-console.log(`Server running on port ${host}`);
-})
-/************************************************************************/
-
-rawda.use(authRouter);
-
-
+app.use(authRoutes);

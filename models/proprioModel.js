@@ -7,7 +7,7 @@ const proprioSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
-  creche: [{ type: Schema.Types.ObjectId, ref: "creches" }],
+  creche: { type: Schema.Types.ObjectId, ref: "creches" },
 });
 
 const proprioModel = mongoose.model("Proprio", proprioSchema);

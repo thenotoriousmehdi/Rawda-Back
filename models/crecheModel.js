@@ -62,6 +62,9 @@ const crecheSchema = new Schema({
   description: {
     type: String,
   },
+  photos: {
+    type: [String],
+  },
   prop: { type: Schema.Types.ObjectId, ref: "users" },
 });
 

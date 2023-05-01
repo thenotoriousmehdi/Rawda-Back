@@ -1,10 +1,8 @@
-
-const FRONT = "../Rawda-Front/src/App.js";
-const users = require('../Models/UserModel');
-const parent = require('../Models/ParentModel');
-const proprio = require('../Models/proprioModel');
-const creches = require('../models/crecheModel');
-const jwt = require('jsonwebtoken');
+const users = require("../models/userModel");
+const parent = require("../models/parentModel");
+const proprio = require("../models/proprioModel");
+const creches = require("../models/crecheModel");
+const jwt = require("jsonwebtoken");
 
 // ERROR HANDLER
 
@@ -34,11 +32,13 @@ const  createToken = ( id )=>{
 
 exports.signup_get = (req , res)=>{
     console.log('signupppp');
+    res.send({});
 }
 
 
 exports.logout_get = (req , res)=>{
     console.log('lognupppp');
+    res.send({});
 }
 
 exports.signup_post = async (req , res)=>{

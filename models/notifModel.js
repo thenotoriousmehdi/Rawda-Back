@@ -12,4 +12,4 @@ const notifSchema = new Schema({
     },
     {timestamps : true, });
 
-module.exports = notifModel;
+module.exports = mongoose.model("notifications", notifSchema);

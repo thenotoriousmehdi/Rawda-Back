@@ -7,14 +7,10 @@ const proprioSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
-  creche: { type: Schema.Types.ObjectId, ref: "creches" },
+  creche: [{ type: Schema.Types.ObjectId, ref: "creches" }],
 });
 
 const proprioModel = mongoose.model("Proprio", proprioSchema);
 
-// Creation d'index pour le champ email
-proprioModel.collection.createIndex({ userID: 1 }, { unique: true }, (err) => {
-  if (err) console.log(err);
-});
 
 module.exports = proprioModel;

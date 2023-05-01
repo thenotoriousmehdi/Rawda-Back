@@ -68,6 +68,27 @@ const crecheSchema = new Schema({
   },
   prop: { type: Schema.Types.ObjectId, ref: "users" },
   prix: { type: Number, default: 0 },
+  avis: {
+    note: {
+      type: Number,
+      default: 5,
+      min: 0,
+      max: 5,
+    },
+    evaluations: {
+      type: [
+        {
+          nom: {
+            type: String,
+          },
+          commentaires: {
+            type: String,
+          },
+        },
+      ],
+      default: [],
+    },
+  },
 });
 
 module.exports = mongoose.model("Creche", crecheSchema);

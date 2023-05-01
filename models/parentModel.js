@@ -8,7 +8,6 @@ const parentSchema = new Schema({
     ref: "users",
   },
   enfant: [{ type: Schema.Types.ObjectId, ref: "enfants" }],
-  notification: [{ type: Schema.Types.ObjectId, ref: "notifications" }]
 });
 
 const parentmodel = mongoose.model("Parent", parentSchema);

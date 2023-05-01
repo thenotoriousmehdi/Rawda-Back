@@ -12,9 +12,4 @@ const parentSchema = new Schema({
 
 const parentmodel = mongoose.model("Parent", parentSchema);
 
-// Creation d'index pour le champ email
-parentmodel.collection.createIndex({ userID: 1 }, { unique: true }, (err) => {
-  if (err) console.log(err);
-});
-
 module.exports = parentmodel;

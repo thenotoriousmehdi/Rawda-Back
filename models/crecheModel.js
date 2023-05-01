@@ -16,7 +16,8 @@ const crecheSchema = new Schema({
     required: true,
   },
   joursAccueil: {
-    type: String,
+    type: [String],
+    maxlenght:7,
     required: true,
   },
   typeEtab: {
@@ -69,24 +70,3 @@ const crecheSchema = new Schema({
 });
 
 module.exports = mongoose.model("Creche", crecheSchema);
-
-/*
-
-{
-  "nom":"Crèche berceau des anges",
-  "localisation":"Birkhadem,Alger",
-  "typeAccueil":"Régulier",
-"joursAccueil":"Du dimanche au mardi",
-  "typeEtab":"Etatique",
-  "ageAccueil":"2-5 ans",
-  "pedagogie":"Montessori",
-  "langue":"Francais",
-  "capacite":2000,
-  "placesDispo":20,
-  "transport":"Oui",
-  "alimentation":"Non",
-  "num":"0663212232",
-  "mail":"kk-saadaoui@esi.dz",
-  "description":"Un endroit magique pour garder vos enfants",
-  "prop":"6425bc77816fb7d82167559a"
-}   */

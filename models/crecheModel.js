@@ -17,7 +17,7 @@ const crecheSchema = new Schema({
   },
   joursAccueil: {
     type: [String],
-    maxlenght:7,
+    maxlenght: 7,
     required: true,
   },
   typeEtab: {
@@ -67,6 +67,7 @@ const crecheSchema = new Schema({
     type: [String],
   },
   prop: { type: Schema.Types.ObjectId, ref: "users" },
+  prix: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model("Creche", crecheSchema);

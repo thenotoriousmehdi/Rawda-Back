@@ -8,6 +8,7 @@ const proprioSchema = new Schema({
     ref: "users",
   },
   creche: { type: Schema.Types.ObjectId, ref: "creches" } ,
+  notification: [{ type: Schema.Types.ObjectId, ref: "notifications" }]
 });
 
 const proprioModel = mongoose.model("Proprio", proprioSchema);

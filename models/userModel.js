@@ -27,8 +27,13 @@ let user = new mongoose.Schema({
     enum: ["parent", "proprio"],
     required: [true, "champs oblogatoire"],
   },
+  phone:{
+    type: String ,
+    default:"00-00000000"
+  },
   photo:{
     type:String,
+    default:""
   }
 });
 

@@ -27,6 +27,9 @@ let user = new mongoose.Schema({
     enum: ["parent", "proprio"],
     required: [true, "champs oblogatoire"],
   },
+  photo:{
+    type:String,
+  }
 });
 
 user.statics.login = async function (email, password) {

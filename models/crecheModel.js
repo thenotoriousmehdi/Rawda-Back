@@ -25,8 +25,8 @@ const crecheSchema = new Schema({
     required: true,
   },
   ageAccueil: {
-    type: String,
-    required: true,
+    ageMin: { type: Number, required: true, default: 1 },
+    ageMax: { type: Number, required: true, max: 8, default: 6 },
   },
   pedagogie: {
     type: String,

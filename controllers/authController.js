@@ -3,9 +3,9 @@ const parent = require('../Models/ParentModel');
 const proprio = require('../Models/proprioModel');
 const creches = require('../models/crecheModel');
 const jwt = require('jsonwebtoken');
-
+const { LocalStorage } = require('node-localstorage');
 // ERROR HANDLER
-
+const localStorage = new LocalStorage('./localStorage');
 const errorhndler = (err) =>
 {
     let errors = { email :'' , password:''};
@@ -23,8 +23,7 @@ const errorhndler = (err) =>
 
 const maxAge = 3600*4*3 ;
 const  createToken = ( id )=>{
-    
-    return jwt.sign({id}, ' AMINEWASSIMOULOUDMAHDI', {
+    return jwt.sign({id}, 'AMINEWASSIMOULOUDMAHDI', {
         expiresIn: maxAge
     });
 
@@ -44,10 +43,11 @@ exports.signup_post = async (req , res)=>{
     const { nom , prenom , email , password , role } = req.body ;
     try{
     const user = await users.create({ nom , prenom , email , password , role });
-    req.session.key = user.email;
-    console.log(req.session.id);
-   const  { userID } = user._id ;
-    const token = createToken(user._id);
+    key = user.email;
+    const  { userID } = user._id ;
+    const token = createToken(user.email);
+    localStorage.setItem('token', token);
+    localStorage.setItem('key',key);
     if (req.body.role == 'parent'){
         const parentSchema = await parent.create({ userID });
     };
@@ -68,13 +68,18 @@ exports.signup_post = async (req , res)=>{
 
 exports.login_post = async(req , res)=>{
     const { email , password} = req.body;
-    req.session = req.session || {};
+    console.log(req.body);
     try{
     const user = await users.login( email , password );
     if (user){
-        res.status(202);    
-        req.session.key = user.email;
-        res.send("LOGGED");
+        res.status(202); 
+        const token = createToken(user.email);
+        res.cookie('jwt' , token , { httpOnly: true , maxAge: maxAge * 1000});   
+        key = user.email;
+        localStorage.setItem('key', user.email);
+        res.json({token : token , 
+                  key : key});
+        
     }
     else{
         res.log("NOT TROUVE");
@@ -83,7 +88,8 @@ exports.login_post = async(req , res)=>{
     }
     catch(err)
     {
-        res.status(400).json({});
+        
+        res.status(400).json({ erreur : ' find probleme'});
 
     }
 }
@@ -139,13 +145,14 @@ exports.documents_post =  async (req, res) => {
 
 exports.get_profile = async (req, res) => {
         console.log('voir profile');
-        const userId = req.session.key;
+        const userId = localStorage.getItem('key');
+        console.log(userId);
         const key={};
         key.email=userId;
         const filtre={};
         try{
         const user= await users.findOne(key);
-        console.log(user)
+        console.log(key)
         const delimiteur=" ";
         filtre.nomc = user.nom+delimiteur+user.prenom;
         filtre.email=user.email;

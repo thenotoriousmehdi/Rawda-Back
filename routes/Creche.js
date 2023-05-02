@@ -7,16 +7,46 @@ const {
   getCreches,
   deleteCreche,
   modifyCreche,
+  home,
 } = require("../controllers/crecheController");
 
 const router = express.Router();
 
-router.get("/", getCreches);
+router.get("/Creche", getCreches);
 
-router.post("/", upload.array("photos", 10), ajouterCreche);
+router.post(
+  "/Creche",
+  upload.fields([
+    { name: "photos", maxCount: 10 },
+    { name: "carteNationale", maxCount: 1 },
+    { name: "agrement", maxCount: 1 },
+  ]),
+  ajouterCreche
+);
 
-router.delete("/:id", deleteCreche);
+router.delete("/Creche/:id", deleteCreche);
 
-router.patch("/:id", modifyCreche);
+router.patch("/Creche/:id", modifyCreche);
+
+router.get("/Home", home);
 
 module.exports = router;
+
+function verifyRole(req, res, next) {
+  const token = req.header("Authorization");
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userRole = decoded.role;
+    if (userRole !== "admin") {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    next();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server Error" });
+  }
+}

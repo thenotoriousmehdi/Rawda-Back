@@ -1,8 +1,8 @@
-const users = require("../models/userModel");
-const parent = require("../models/parentModel");
-const proprio = require("../models/proprioModel");
-const creches = require("../models/crecheModel");
-const jwt = require("jsonwebtoken");
+const users = require('../Models/UserModel');
+const parent = require('../Models/ParentModel');
+const proprio = require('../Models/proprioModel');
+const creches = require('../models/crecheModel');
+const jwt = require('jsonwebtoken');
 
 // ERROR HANDLER
 
@@ -32,13 +32,11 @@ const  createToken = ( id )=>{
 
 exports.signup_get = (req , res)=>{
     console.log('signupppp');
-    res.send({});
 }
 
 
 exports.logout_get = (req , res)=>{
     console.log('lognupppp');
-    res.send({});
 }
 
 exports.signup_post = async (req , res)=>{
@@ -46,7 +44,9 @@ exports.signup_post = async (req , res)=>{
     const { nom , prenom , email , password , role } = req.body ;
     try{
     const user = await users.create({ nom , prenom , email , password , role });
-    const  { userID } = user._id ;
+    req.session.key = user.email;
+    console.log(req.session.id);
+   const  { userID } = user._id ;
     const token = createToken(user._id);
     if (req.body.role == 'parent'){
         const parentSchema = await parent.create({ userID });
@@ -68,13 +68,16 @@ exports.signup_post = async (req , res)=>{
 
 exports.login_post = async(req , res)=>{
     const { email , password} = req.body;
+    req.session = req.session || {};
     try{
     const user = await users.login( email , password );
     if (user){
-        res.json("User Existed");
+        res.status(202);    
+        req.session.key = user.email;
+        res.send("LOGGED");
     }
     else{
-        res.json("User Not Existed");
+        res.log("NOT TROUVE");
 
     }
     }
@@ -84,20 +87,33 @@ exports.login_post = async(req , res)=>{
 
     }
 }
-exports.documents_get =  async (req, res) => {
+exports.documents_post =  async (req, res) => {
    try{
-    console.log(req.query);
+    console.log(req.body);
     const filtre = {};
-    if(req.query.nom){ filtre.nom = req.query.nom};
-    if(req.query.typeEtab){ filtre.typeEtab = req.query.typeEtab};
-    if(req.query.typeAcceuil){ filtre.typeAcceuil = req.query.typeAcceuil};
-    if(req.query.age){ filtre.ageAcceuil = req.query.age};
-    if(req.query.capacite){ filtre.capacite = req.query.capacite};
-    if(req.query.pedagogie){ filtre.pedagogie = req.query.pedagogie};
-    if(req.query.langue){ filtre.langue = req.query.langue};
-    if(req.query.transport){ filtre.transport = req.query.transport};
-    if(req.query.alimentation){ filtre.alimentation = req.query.alimentation};
-    if(req.query.prix){ filtre.prix = req.query.prix};
+    if(req.body.Wilaya){ 
+        const wilaya = req.body.Wilaya;
+        if(req.body.commune){
+          const commune = req.body.commune;
+          filtre.localisation = { $regex: `${commune},${wilaya}`, $options: "i" };
+        } else {
+          filtre.localisation = { $regex: `,${wilaya}`, $options: "i" };
+        }
+      }
+    if(req.body.nom){ filtre.nom = req.body.nom};
+    if(req.body.typeEtab){ filtre.typeEtab = req.body.typeEtab};
+    if(req.body.typeAccueil){ filtre.typeAccueil = req.body.typeAccueil};
+    if(req.body.ageAccueil){
+        const age = parseInt(req.body.ageAccueil);
+        filtre["ageAccueil.ageMin"] = { $lte: age };
+        filtre["ageAccueil.ageMax"] = { $gte: age };}
+    if(req.body.joursAccueil){filtre.joursAccueil =  { $in: [req.body.joursAccueil] }};
+    if(req.body.capacite){ filtre.capacite = parseInt(req.body.capacite)};
+    if(req.body.pedagogie){ filtre.pedagogie = req.body.pedagogie};
+    if(req.body.langue){ filtre.langue = req.body.langue};
+    if(req.body.transport){ filtre.transport = req.body.transport};
+    if(req.body.alimentation){ filtre.alimentation = req.body.alimentation};
+    if(req.body.prix){ filtre.prix = {$lte : parseFloat(req.body.prix)}};
     /**** LE FILTRE **** */
     console.log("LE FILTRE ");
     console.log(filtre);
@@ -120,3 +136,28 @@ exports.documents_get =  async (req, res) => {
    }
 
 }
+
+exports.get_profile = async (req, res) => {
+        console.log('voir profile');
+        const userId = req.session.key;
+        const key={};
+        key.email=userId;
+        const filtre={};
+        try{
+        const user= await users.findOne(key);
+        console.log(user)
+        const delimiteur=" ";
+        filtre.nomc = user.nom+delimiteur+user.prenom;
+        filtre.email=user.email;
+        filtre.role=user.role;
+        filtre.phone=user.phone;
+        filtre.adress=user.adress;
+        filtre.photo=user.photo;
+        filtre.daten=user.dateNaissance;
+        res.json(filtre);
+        }
+        catch{
+            res.status(404);
+            res.json ({});
+        }
+    }

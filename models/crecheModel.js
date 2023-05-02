@@ -25,8 +25,8 @@ const crecheSchema = new Schema({
     required: true,
   },
   ageAccueil: {
-    ageMin: { type: Number, required: true, default: 1 },
-    ageMax: { type: Number, required: true, max: 8, default: 6 },
+    ageMin: { type: Number, default: 1 },
+    ageMax: { type: Number, max: 8, default: 6 },
   },
   pedagogie: {
     type: String,
@@ -42,7 +42,6 @@ const crecheSchema = new Schema({
   },
   placesDispo: {
     type: Number,
-    required: true,
   },
   transport: {
     type: String,
@@ -71,7 +70,7 @@ const crecheSchema = new Schema({
   avis: {
     note: {
       type: Number,
-      default: 5,
+      default: 0,
       min: 0,
       max: 5,
     },
@@ -88,6 +87,14 @@ const crecheSchema = new Schema({
       ],
       default: [],
     },
+  },
+  carteNationale: {
+    type: String,
+    required: true,
+  },
+  agrement: {
+    type: String,
+    required: true,
   },
 });
 

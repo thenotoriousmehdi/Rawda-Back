@@ -33,5 +33,6 @@ mongoose
     console.log(error);
   });
 
-app.use("/Creche", crecheRoutes);
+app.use(crecheRoutes);
+
 app.use(authRoutes);

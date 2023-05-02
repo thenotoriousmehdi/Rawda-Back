@@ -31,9 +31,17 @@ let user = new mongoose.Schema({
     type: String ,
     default:"00-00000000"
   },
+  adress:{
+    type: String,
+    default:"",
+  },
   photo:{
     type:String,
     default:""
+  },
+  dateNaissance:{
+    type: Date,
+    default: new Date(1111,11,11),
   }
 });
 

@@ -3,6 +3,7 @@ const mongoose = require("mongoose"); //pour ObjectId.isValid
 
 //Create new creche
 const ajouterCreche = async (req, res) => {
+  console.log(req.body);
   const {
     nom,
     localisation,
@@ -13,7 +14,6 @@ const ajouterCreche = async (req, res) => {
     pedagogie,
     langue,
     capacite,
-    placesDispo,
     transport,
     alimentation,
     num,
@@ -21,6 +21,8 @@ const ajouterCreche = async (req, res) => {
     description,
     prop,
   } = req.body;
+ 
+
   //Ajouter la creche a la BD
   const photosPaths = [];
   if (req.files) {
@@ -36,11 +38,13 @@ const ajouterCreche = async (req, res) => {
       typeAccueil,
       joursAccueil,
       typeEtab,
-      ageAccueil,
+      ageAccueil:{
+         ageMin: ageAccueil,
+         ageMax: undefined
+      },
       pedagogie,
       langue,
       capacite,
-      placesDispo,
       transport,
       alimentation,
       num,
@@ -49,6 +53,7 @@ const ajouterCreche = async (req, res) => {
       prop,
       photos: photosPaths.map((path) => `uploads/${path}`),
     });
+    console.log('creche');
     res.status(200).json(creche);
   } catch (error) {
     console.log(error);

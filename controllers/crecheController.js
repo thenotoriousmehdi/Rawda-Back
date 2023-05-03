@@ -60,6 +60,7 @@ const ajouterCreche = async (req, res) => {
     res.status(400).json(error);
   }
 };
+
 const getCreches = async (req, res) => {
   const creche = await Creche.find({});
   res.status(200).json(creche);

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const { isEmail } = require("validator");
 const Schema = mongoose.Schema;
 
 const crecheSchema = new Schema({
@@ -14,6 +14,10 @@ const crecheSchema = new Schema({
   typeAccueil: {
     type: String,
     required: true,
+  },
+   placesDispo:{
+     type:Number,
+     default:20
   },
   joursAccueil: {
     type: [String],
@@ -52,10 +56,11 @@ const crecheSchema = new Schema({
     type: String,
     required: true,
   },
-  mail: {
-    type: String,
-    required: true,
-  },
+  mail:{
+  type: String,
+  required: [true, "champs obligatoire"],
+  validate: [isEmail, " EmailNonValide"],
+  }, 
   description: {
     type: String,
   },

@@ -40,9 +40,6 @@ const crecheSchema = new Schema({
     type: Number,
     required: true,
   },
-  placesDispo: {
-    type: Number,
-  },
   transport: {
     type: String,
     required: true,

@@ -162,6 +162,7 @@ exports.get_profile = async (req, res) => {
         filtre.photo=user.photo;
         filtre.daten=user.dateNaissance;
         res.json(filtre);
+        localStorage.removeItem('key');
         }
         catch{
             res.status(404);

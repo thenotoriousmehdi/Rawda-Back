@@ -15,12 +15,11 @@ const ajouterCreche = async (req, res) => {
   const user= await users.findOne(key);
   if (user){
     const id=user._id ;
-    pro = proprio.find({ userID: id }) 
+    pro = proprio.find({ userID: id })
     .populate('userID')
     .populate('creche');
-    
-    console.log(pro);
-    if (pro){
+    console.log(pro)
+    if (pro || user.role=='admin'){
           console.log(req.body);
           const {
             nom,
@@ -86,20 +85,41 @@ const getCreches = async (req, res) => {
 
 const deleteCreche = async (req, res) => {
   const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "pas de telle creche" });
-  }
+  const userMail = localStorage.getItem('key');
+  const key={};
+  key.email = userMail;
+  const user= await users.findOne(key);
+  if(user){
+    pro = proprio.find({ userID: id })
+    .populate('userID')
+    .populate('creche');
+    if (pro || user.role=='admin'){
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+          return res.status(404).json({ error: "pas de telle creche" });
+        }
 
-  const creche = await Creche.findOneAndDelete({ _id: id });
+        const creche = await Creche.findOneAndDelete({ _id: id });
 
-  if (!creche) {
-    return res.status(400).json({ error: "pas de telle creche" });
-  }
-  res.json(creche);
+        if (!creche) {
+          return res.status(400).json({ error: "pas de telle creche" });
+        }
+  res.json(creche);}
+  else {res.status(404).json({error:'NOT ALLOWED'})}}
+  else res.status(404).json({error:'NOT FOUND'});
 };
 
 const modifyCreche = async (req, res) => {
   const { id } = req.params;
+  const userMail = localStorage.getItem('key');
+  const key={};
+  key.email = userMail;
+  const user= await users.findOne(key);
+  if (user){
+    const id=user._id ;
+    pro = proprio.find({ userID: id })
+    .populate('userID')
+    .populate('creche');
+    if (pro){
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "pas de telle creche" });
   }
@@ -110,6 +130,7 @@ const modifyCreche = async (req, res) => {
     return res.status(400).json({ error: "pas de telle creche" });
   }
   res.json(creche);
-};
-
+}else res.status(404).json({error: "NOT ALLOWED"});
+  }else res.status(404).json({error: "USER NOT FOUND"});
+}
 module.exports = { ajouterCreche, getCreches, deleteCreche, modifyCreche };

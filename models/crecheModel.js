@@ -15,10 +15,6 @@ const crecheSchema = new Schema({
     type: String,
     required: true,
   },
-   placesDispo:{
-     type:Number,
-     default:20
-  },
   joursAccueil: {
     type: [String],
     maxlenght: 7,
@@ -44,6 +40,9 @@ const crecheSchema = new Schema({
     type: Number,
     required: true,
   },
+  placesDispo: {
+    type: Number,
+  },
   transport: {
     type: String,
     required: true,
@@ -56,11 +55,11 @@ const crecheSchema = new Schema({
     type: String,
     required: true,
   },
-  mail:{
-  type: String,
-  required: [true, "champs obligatoire"],
-  validate: [isEmail, " EmailNonValide"],
-  }, 
+  mail: {
+    type: String,
+    required: [true, "champs obligatoire"],
+    validate: [isEmail, " EmailNonValide"],
+  },
   description: {
     type: String,
   },
@@ -92,11 +91,15 @@ const crecheSchema = new Schema({
   },
   carteNationale: {
     type: String,
-    required: true,
+    //required: true,
   },
   agrement: {
     type: String,
-    required: true,
+    //required: true,
+  },
+  valide: {
+    type: Boolean,
+    default: false,
   },
 });
 

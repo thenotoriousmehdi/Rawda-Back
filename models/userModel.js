@@ -40,8 +40,8 @@ let user = new mongoose.Schema({
     default:""
   },
   dateNaissance:{
-    type: Date,
-    default: new Date(1111,11,11),
+    type: String,
+    default: '0000-00-00',
   }
 });
 
@@ -66,8 +66,5 @@ user.pre("save", async function (next) {
 
 const USERS = mongoose.model("USERS", user);
 // Creation d'index pour le champ email
-USERS.collection.createIndex({ email: 1 }, { unique: true }, (err) => {
-  if (err) console.log(err);
-});
 
 module.exports = USERS;

@@ -21,7 +21,7 @@ const errorhndler = (err) =>
     return errors ;
 }
 
-const maxAge = 3600*4*3 ;
+const maxAge = 60*4 ;
 const  createToken = ( id )=>{
     return jwt.sign({id}, 'AMINEWASSIMOULOUDMAHDI', {
         expiresIn: maxAge
@@ -168,4 +168,8 @@ exports.get_profile = async (req, res) => {
             res.status(404);
             res.json ({});
         }
+        localStorage.removeItem('token');
+        localStorage.removeItem('key');
     }
+
+  

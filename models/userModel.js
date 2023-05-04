@@ -24,7 +24,7 @@ let user = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ["parent", "proprio"],
+    enum: ["parent", "proprio","admin"],
     required: [true, "champs oblogatoire"],
   },
   phone:{

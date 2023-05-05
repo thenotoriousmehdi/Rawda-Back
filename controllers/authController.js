@@ -172,4 +172,20 @@ exports.get_profile = async (req, res) => {
         localStorage.removeItem('key');
     }
 
-  
+    exports.modifProfile = async (req,res)=>{
+        const updateInfo=Object.keys(req.body);
+        const userMail = localStorage.getItem('key');
+        console.log(userMail);
+        /** Voir si il est authentifié **/
+        if (userMail){
+        try{
+        const user = await users.findOne({ email: userMail });
+        updateInfo.forEach(update => user[update]=req.body[update]);
+        await user.save();
+        res.status(200);
+        res.json(user);}
+        catch(err){res.status(404).json(err)};
+        }else res.status(404).json({error: "MODIFICATION NON CONQUISE "});
+        }   
+
+

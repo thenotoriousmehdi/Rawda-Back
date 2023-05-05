@@ -9,5 +9,7 @@ route.get("/logout", authController.logout_get);
 route.post("/login", authController.login_post);
 route.post("/documents",authController.documents_post);
 route.get("/profile",authController.get_profile);
+route.patch("/modifierProfile",authController.modifProfile);
 
 module.exports = route;
+

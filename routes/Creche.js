@@ -8,6 +8,7 @@ const {
   deleteCreche,
   modifyCreche,
   home,
+  getCrechersParProprio
 } = require("../controllers/crecheController");
 
 const router = express.Router();
@@ -25,6 +26,8 @@ router.post(
 );
 
 router.delete("/Creche/:id", deleteCreche);
+
+router.get("/:propId", getCrechesParProp);
 
 router.patch("/Creche/:id", modifyCreche);
 

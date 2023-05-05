@@ -132,5 +132,12 @@ const modifyCreche = async (req, res) => {
   res.json(creche);
 }else res.status(404).json({error: "NOT ALLOWED"});
   }else res.status(404).json({error: "USER NOT FOUND"});
-}
-module.exports = { ajouterCreche, getCreches, deleteCreche, modifyCreche };
+};
+const getCrechesParProp = async(req, res) => {
+    const propId = req.params.propId
+    const creches = await Creche.find({ prop: propId });
+    res.status(200).json(creches);
+};
+
+module.exports = { ajouterCreche, getCreches, getCrechesParProp, deleteCreche, modifyCreche };
+

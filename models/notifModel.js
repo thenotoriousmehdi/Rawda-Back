@@ -11,6 +11,10 @@ const notifSchema = new Schema({
         type: String,
         required: false,
     },
+    emailParent:{
+        type :String,
+        required : false
+    },
     nomEnfant: {
         type: String,
         required: false,

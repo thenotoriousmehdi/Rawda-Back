@@ -2,19 +2,14 @@ const mongoose = require("mongoose");
 const Notif = require("../models/notifModel");
 
 // Récupérer les notifications propriétaire pour un propriétaire donné
-const obtenirNotifsPropParProp = async(req, res) => {
-    const propId = req.params.propId; // récupérer l'ID du propriétaire à partir des paramètres de requête
-    let notifs;
-    notifs = await Notif.find({ proprietaire: propId });
-    res.status(201).json(notifs);
-};
 const ajouterNotifProp = async(req, res) => {
-    const { nomParent, prenomParent, nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv } = req.body;
+    const { nomParent, prenomParent, emailParent, nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv } = req.body;
     const proprietaire = req.params.propId; // récupérer l'ID du propriétaire à partir des paramètres de requête
 
     const notif = await new Notif({
         nomParent,
         prenomParent,
+        emailParent,
         nomEnfant,
         prenomEnfant,
         dateNaissance,

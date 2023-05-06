@@ -1,6 +1,6 @@
 const users = require('../Models/UserModel');
-const parent = require('../Models/ParentModel');
-const proprio = require('../Models/proprioModel');
+const parent = require('../models/parentModel');
+const proprio = require('../models/proprioModel');
 const creches = require('../models/crecheModel');
 const jwt = require('jsonwebtoken');
 const { LocalStorage } = require('node-localstorage');
@@ -11,8 +11,7 @@ const errorhndler = (err) =>
 {
     let errors = { email :'' , password:''};
     console.log(err.message , err.code);
-  
-   
+    
 
     // validation error
     if ( err.message.includes('USERS validation failed')){ console.log(err)};
@@ -111,7 +110,10 @@ exports.documents_post =  async (req, res) => {
           filtre.localisation = { $regex: `,${wilaya}`, $options: "i" };
         }
       }
-    if(req.body.nom){ filtre.nom = req.body.nom};
+    if(req.body.nom){ 
+        const nom=req.body.nom
+        const trimmedSearchString = nom.trim();
+        filtre.nom = trimmedSearchString};
     if(req.body.typeEtab){ filtre.typeEtab = req.body.typeEtab};
     if(req.body.typeAccueil){ filtre.typeAccueil = req.body.typeAccueil};
     if(req.body.ageAccueil){
@@ -178,7 +180,7 @@ exports.get_profile = async (req, res) => {
     }
 
   
-    exports.modifProfile = async (req,res)=>{
+    exports.modifInfoProfile = async (req,res)=>{
         const updateInfo=Object.keys(req.body);
         const userMail = localStorage.getItem('key');
         console.log(userMail);
@@ -193,3 +195,18 @@ exports.get_profile = async (req, res) => {
         catch(err){res.status(404).json(err)};
         }else res.status(404).json({error: "MODIFICATION NON CONQUISE "});
         }   
+
+
+   /**  exports.modiferPassword = async (req , res)=>{
+        const userMail = localStorage.getItem('key');
+        console.log(userMail);
+        /** Voir si il est authentifié 
+        if (userMail){
+            try{
+                const user = await users.findOne({ email: userMail });
+                if (req.body.ancienPassword == user.password){
+                    
+
+                }**/ 
+
+

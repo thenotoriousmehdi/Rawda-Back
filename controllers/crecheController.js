@@ -1,82 +1,84 @@
 const Creche = require("../models/crecheModel");
 const mongoose = require("mongoose"); //pour ObjectId.isValid
-const users = require('../Models/UserModel');
-const proprio = require('../Models/proprioModel');
-const { LocalStorage } = require('node-localstorage');
+const users = require("../models/userModel");
+const proprio = require("../models/proprioModel");
+const { LocalStorage } = require("node-localstorage");
 // ERROR HANDLER
-const localStorage = new LocalStorage('./localStorage');
-
+const localStorage = new LocalStorage("./localStorage");
 
 //Create new creche
 const ajouterCreche = async (req, res) => {
-  const userMail = localStorage.getItem('key');
-  const key={};
+  const userMail = localStorage.getItem("key");
+  const key = {};
   key.email = userMail;
-  const user= await users.findOne(key);
-  if (user){
-    const id=user._id ;
-    pro = proprio.find({ userID: id })
-    .populate('userID')
-    .populate('creche');
-    console.log(pro)
-    if (pro || user.role=='admin'){
-          console.log(req.body);
-          const {
-            nom,
-            localisation,
-            typeAccueil,
-            joursAccueil,
-            typeEtab,
-            ageAccueil,
-            pedagogie,
-            langue,
-            capacite,
-            transport,
-            alimentation,
-            num,
-            mail,
-            description,
-            prop,
-          } = req.body;
-        
+  const user = await users.findOne(key);
+  if (user) {
+    const id = user._id;
+    pro = proprio.find({ userID: id }).populate("userID").populate("creche");
 
-          //Ajouter la creche a la BD
-          const photosPaths = [];
-          if (req.files) {
-            let files = req.files;
-            for (let i = 0; i < files.length; i++) {
-              photosPaths.push(files[i].filename);
-            }
-          }
-          try {
-            const creche = await Creche.create({
-              nom,
-              localisation,
-              typeAccueil,
-              joursAccueil,
-              typeEtab,
-              ageAccueil:{
-                ageMin: ageAccueil,
-                ageMax: undefined
-              },
-              pedagogie,
-              langue,
-              capacite,
-              transport,
-              alimentation,
-              num,
-              mail,
-              description,
-              prop,
-              photos: photosPaths.map((path) => `uploads/${path}`),
-            });
-            console.log('creche');
-            res.status(200).json(creche);
-          } catch (error) {
-            console.log(error);
-            res.status(400).json(error);
-          }}else{res.json({error:' NOT ALLOWED'})};
-}else { res.json({ error: 'user not found'})}};
+    console.log(pro);
+    if (pro) {
+      console.log(req.body);
+      const {
+        nom,
+        localisation,
+        typeAccueil,
+        joursAccueil,
+        typeEtab,
+        ageAccueil,
+        pedagogie,
+        langue,
+        capacite,
+        transport,
+        alimentation,
+        num,
+        mail,
+        description,
+        prop,
+      } = req.body;
+
+      //Ajouter la creche a la BD
+      const photosPaths = [];
+      if (req.files) {
+        let files = req.files;
+        for (let i = 0; i < files.length; i++) {
+          photosPaths.push(files[i].filename);
+        }
+      }
+      try {
+        const creche = await Creche.create({
+          nom,
+          localisation,
+          typeAccueil,
+          joursAccueil,
+          typeEtab,
+          ageAccueil: {
+            ageMin: ageAccueil,
+            ageMax: undefined,
+          },
+          pedagogie,
+          langue,
+          capacite,
+          transport,
+          alimentation,
+          num,
+          mail,
+          description,
+          prop,
+          photos: photosPaths.map((path) => `uploads/${path}`),
+        });
+        res.status(200).json(creche);
+      } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+      }
+    } else {
+      res.json({ error: " NOT ALLOWED" });
+    }
+  } else {
+    res.json({ error: "user not found" });
+  }
+};
 
 const getCreches = async (req, res) => {
   const creche = await Creche.find({});
@@ -85,59 +87,133 @@ const getCreches = async (req, res) => {
 
 const deleteCreche = async (req, res) => {
   const { id } = req.params;
-  const userMail = localStorage.getItem('key');
-  const key={};
+  const userMail = localStorage.getItem("key");
+  const key = {};
   key.email = userMail;
-  const user= await users.findOne(key);
-  if(user){
-    pro = proprio.find({ userID: id })
-    .populate('userID')
-    .populate('creche');
-    if (pro || user.role=='admin'){
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-          return res.status(404).json({ error: "pas de telle creche" });
-        }
+  const user = await users.findOne(key);
+  if (user) {
+    pro = proprio.find({ userID: id }).populate("userID").populate("creche");
+    if (pro || user.role == "admin") {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: "pas de telle creche" });
+      }
 
-        const creche = await Creche.findOneAndDelete({ _id: id });
+      const creche = await Creche.findOneAndDelete({ _id: id });
 
-        if (!creche) {
-          return res.status(400).json({ error: "pas de telle creche" });
-        }
-  res.json(creche);}
-  else {res.status(404).json({error:'NOT ALLOWED'})}}
-  else res.status(404).json({error:'NOT FOUND'});
+      if (!creche) {
+        return res.status(400).json({ error: "pas de telle creche" });
+      }
+      res.json(creche);
+    } else {
+      res.status(404).json({ error: "NOT ALLOWED" });
+    }
+  } else res.status(404).json({ error: "NOT FOUND" });
 };
 
 const modifyCreche = async (req, res) => {
   const { id } = req.params;
-  const userMail = localStorage.getItem('key');
-  const key={};
+  const userMail = localStorage.getItem("key");
+  const key = {};
   key.email = userMail;
-  const user= await users.findOne(key);
-  if (user){
-    const id=user._id ;
-    pro = proprio.find({ userID: id })
-    .populate('userID')
-    .populate('creche');
-    if (pro){
+  const user = await users.findOne(key);
+  if (user) {
+    const id = user._id;
+    pro = proprio.find({ userID: id }).populate("userID").populate("creche");
+    if (pro) {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: "pas de telle creche" });
+      }
+
+      const creche = await Creche.findOneAndUpdate(
+        { _id: id },
+        { ...req.body }
+      );
+
+      if (!creche) {
+        return res.status(400).json({ error: "pas de telle creche" });
+      }
+      res.json(creche);
+    } else res.status(404).json({ error: "NOT ALLOWED" });
+  } else res.status(404).json({ error: "USER NOT FOUND" });
+};
+
+const home = (req, res) => {
+  // Récupérer les 7 crèches les mieux notées
+  Creche.find()
+    .sort({ "avis.note": 1 })
+    .limit(7)
+    .then((creches) => {
+      //console.log("7 crèches les mieux notées :", creches);
+      // Renvoyer les résultats au front-end
+      res.json(creches);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
+
+const infoCreche = async (req, res) => {
+  const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "pas de telle creche" });
   }
 
-  const creche = await Creche.findOneAndUpdate({ _id: id }, { ...req.body });
+  const creche = await Creche.findOne({ _id: id });
 
   if (!creche) {
     return res.status(400).json({ error: "pas de telle creche" });
   }
+  console.log("creche trouveé !");
   res.json(creche);
-}else res.status(404).json({error: "NOT ALLOWED"});
-  }else res.status(404).json({error: "USER NOT FOUND"});
-};
-const getCrechesParProp = async(req, res) => {
-    const propId = req.params.propId
-    const creches = await Creche.find({ prop: propId });
-    res.status(200).json(creches);
 };
 
-module.exports = { ajouterCreche, getCreches, getCrechesParProp, deleteCreche, modifyCreche };
+const evaluerCreche = async (req, res) => {
+  const { id } = req.params;
+  const userMail = localStorage.getItem("key");
+  const user = await users.findOne({ email: userMail });
+  const nom = user.nom + " " + user.prenom;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "pas de telle creche" });
+  }
+  const creche = await Creche.findOne({ _id: id });
 
+  let newNote = req.body.note;
+  console.log(newNote);
+  const coms = creche.avis.evaluations;
+  console.log(coms.length);
+
+  const newEval = {
+    nom: nom,
+    commentaires: req.body.commentaires,
+  };
+  coms.push(newEval);
+  newNote = (creche.avis.note * coms.length + newNote) / (coms.length + 1);
+
+  const update = await Creche.findOneAndUpdate(
+    { _id: id },
+    { "avis.evaluations": coms, "avis.note": newNote }
+  );
+  if (!update) {
+    return res
+      .status(400)
+      .json({ error: "une erreur s'est produite lors de l'evaluation" });
+  }
+  console.log("Evaluée avec succes");
+};
+
+const getCrechesParProp = async (req, res) => {
+  const propId = req.params.propId;
+  const creches = await Creche.find({ prop: propId });
+  res.status(200).json(creches);
+};
+
+module.exports = {
+  ajouterCreche,
+  getCreches,
+  deleteCreche,
+  modifyCreche,
+  home,
+  infoCreche,
+  evaluerCreche,
+  getCrechesParProp,
+};

@@ -6,6 +6,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const crecheRoutes = require("./routes/Creche.js");
 const session = require('express-session');
+const rdvRoutes = require("./routes/prendreRdvRoutes");
 //express app
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(session({
 }));
 //app.use(express.static("public"));
 app.use("/uploads",express.static("uploads"))
+
 
 //Connecting to the DB
 mongoose
@@ -36,3 +38,5 @@ mongoose
 app.use(crecheRoutes);
 
 app.use(authRoutes);
+
+app.use(rdvRoutes);

@@ -2,6 +2,7 @@ const users = require('../Models/UserModel');
 const parent = require('../models/parentModel');
 const proprio = require('../models/proprioModel');
 const creches = require('../models/crecheModel');
+const { format } = require('date-fns');
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const { LocalStorage } = require('node-localstorage');
@@ -152,64 +153,57 @@ exports.documents_post =  async (req, res) => {
 }
 
 exports.get_profile = async (req, res) => {
-        console.log('voir profile');
-        const userId = localStorage.getItem('key');
-        console.log(userId);
-        const key={};
-        key.email=userId;
-        const filtre={};
-        try{
-        const user= await users.findOne(key);
-        console.log(key)
-        const delimiteur=" ";
-        filtre.nomc = user.nom+delimiteur+user.prenom;
-        filtre.email=user.email;
-        filtre.role=user.role;
-        filtre.phone=user.phone;
-        filtre.adress=user.adress;
-        filtre.photo=user.photo;
-        filtre.daten=user.dateNaissance;
-        res.json(filtre);
-        localStorage.removeItem('key');
-        }
-        catch{
-            res.status(404);
-            res.json ({});
-        }
-        localStorage.removeItem('token');
-        localStorage.removeItem('key');
-    }
+    console.log("voir profile");
+     const userId = localStorage.getItem("key");
+     //console.log(userId);
+     const key = {};
+     key.email = userId;
+     const filtre = {};
+     try {
+       const user = await users.findOne(key);
+       console.log(key);
+       const delimiteur = " ";
+       filtre.nomc = user.nom + delimiteur + user.prenom;
+       filtre.email = user.email;
+       filtre.role = user.role;
+       filtre.phone = user.phone;
+       filtre.adress = user.adress;
+       filtre.photo = user.photo;
+       filtre.daten = user.dateNaissance;
+       console.log(filtre);
+       res.json(filtre);
+      // localStorage.removeItem("key");
+     } catch {
+       res.status(404);
+       console.log(filtre);
+       res.json({});
+       console.log("probleme")
+     }
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("key");
+   };
+   
 
   
     exports.modifInfoProfile = async (req,res)=>{
-        const updateInfo=Object.keys(req.body);
+        const key={};
+       if (req.body.phone){key.phone=req.body.phone;};
+       if(req.body.adress){key.adress=req.body.adress;};
+       if(req.body.dateNaissance){key.dateNaissance=req.body.dateNaissance};
+        const updateInfo=Object.keys(key);
         const userMail = localStorage.getItem('key');
         console.log(userMail);
         /** Voir si il est authentifié **/
         if (userMail){
         try{
         const user = await users.findOne({ email: userMail });
-        updateInfo.forEach(update => user[update]=req.body[update]);
+        updateInfo.forEach(update => user[update]=key[update]);
         await user.save();
         res.status(200);
         res.json(user);}
         catch(err){res.status(404).json(err)};
         }else res.status(404).json({error: "MODIFICATION NON CONQUISE "});
         }   
-
-/**exports.modiferPassword = async (req , res)=>{
-        const userMail = localStorage.getItem('key');
-        console.log(userMail);
-        /** Voir si il est authentifié**/ 
-        /**if (userMail){
-            try{
-                const user = await users.findOne({ email: userMail });
-                if (user.isValidPa){
-                    user.password=req.body.newPassword;
-                    user.save();
-
-                } */
-
 
 exports.modifPassword = async(req, res) => {
     const userMail = localStorage.getItem('key');
@@ -223,9 +217,9 @@ exports.modifPassword = async(req, res) => {
     try{
      const user = await users.findOne({email : userMail});
         // Vérifier si l'ancien mot de passe est correct
-        console.log(user.password);
+        console.log(user);
         console.log(req.body.newPassword);     
-        const validation = bcrypt.compareSync( req.body.oldPassword ,user.password);
+        const validation = bcrypt.compareSync( req.body.oldPassword , user.password);
         if (!validation) {
             return res.status(404).json({ message: 'L\'ancien mot de passe est incorrect.' });
         }

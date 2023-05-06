@@ -3,6 +3,7 @@ const parent = require('../models/parentModel');
 const proprio = require('../models/proprioModel');
 const creches = require('../models/crecheModel');
 const jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt");
 const { LocalStorage } = require('node-localstorage');
 
 // ERROR HANDLER
@@ -196,17 +197,48 @@ exports.get_profile = async (req, res) => {
         }else res.status(404).json({error: "MODIFICATION NON CONQUISE "});
         }   
 
-
-   /**  exports.modiferPassword = async (req , res)=>{
+/**exports.modiferPassword = async (req , res)=>{
         const userMail = localStorage.getItem('key');
         console.log(userMail);
-        /** Voir si il est authentifié 
-        if (userMail){
+        /** Voir si il est authentifié**/ 
+        /**if (userMail){
             try{
                 const user = await users.findOne({ email: userMail });
-                if (req.body.ancienPassword == user.password){
-                    
+                if (user.isValidPa){
+                    user.password=req.body.newPassword;
+                    user.save();
 
-                }**/ 
+                } */
 
+
+exports.modifPassword = async(req, res) => {
+    const userMail = localStorage.getItem('key');
+    const updates = {};
+    console.log(userMail);
+    updates.password=req.body.newPassword;
+    const updateInfo=Object.keys(updates);
+        /** Voir si il est authentifié **/
+    if (userMail){
+    // Vérifier si l'utilisateur existe dans la base de données
+    try{
+     const user = await users.findOne({email : userMail});
+        // Vérifier si l'ancien mot de passe est correct
+        console.log(user.password);
+        console.log(req.body.newPassword);     
+        const validation = bcrypt.compareSync( req.body.oldPassword ,user.password);
+        if (!validation) {
+            return res.status(404).json({ message: 'L\'ancien mot de passe est incorrect.' });
+        }
+        // Mettre à jour le mot de passe de l'utilisateur
+        updateInfo.forEach(update => user[update]= updates[update]);
+        user.save();
+     
+        res.status(200); 
+        res.send({ message: 'Le mot de passe a été mis à jour avec succès.' });
+        }catch(error){res.status(404).json({ error: 'Une erreur est survenue lors de la mise à jour du mot de passe.' });
+          console.log(error);
+        };
+    }else{ res.status(404).json({error:" YOU DONT HAVE THE ACCESS"})};
+};
+            
 

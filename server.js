@@ -19,7 +19,7 @@ app.use(session({
   saveUninitialized: true
 }));
 //app.use(express.static("public"));
-//app.use("/uploads",express.static("uploads"))
+app.use("/uploads",express.static("uploads"))
 
 //Connecting to the DB
 mongoose

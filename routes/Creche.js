@@ -1,5 +1,4 @@
 const express = require("express");
-const Post = require("../models/postModel");
 const upload = require("../middleware/upload");
 
 const {
@@ -8,7 +7,8 @@ const {
   deleteCreche,
   modifyCreche,
   home,
-  getCrechersParProprio
+  infoCreche,
+  evaluerCreche,
 } = require("../controllers/crecheController");
 
 const router = express.Router();
@@ -27,29 +27,12 @@ router.post(
 
 router.delete("/Creche/:id", deleteCreche);
 
-router.get("/:propId", getCrechesParProp);
-
 router.patch("/Creche/:id", modifyCreche);
+
+router.get("/Creche/:id", infoCreche);
 
 router.get("/Home", home);
 
+router.patch("/evaluerCreche/:id", evaluerCreche);
+
 module.exports = router;
-
-function verifyRole(req, res, next) {
-  const token = req.header("Authorization");
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userRole = decoded.role;
-    if (userRole !== "admin") {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-    next();
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server Error" });
-  }
-}

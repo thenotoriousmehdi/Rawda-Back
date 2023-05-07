@@ -8,6 +8,7 @@ const localStorage = new LocalStorage("./localStorage");
 
 //Create new creche
 const ajouterCreche = async (req, res) => {
+  //console.log(req.files);
   const userMail = localStorage.getItem("key");
   const key = {};
   key.email = userMail;
@@ -33,22 +34,40 @@ const ajouterCreche = async (req, res) => {
         num,
         mail,
         description,
+        prix,
       } = req.body;
 
       //Ajouter la creche a la BD
       const photosPaths = [];
-      if (req.files) {
-        let files = req.files;
-        for (let i = 0; i < files.length; i++) {
-          photosPaths.push(files[i].filename);
+      if (req.files.photos) {
+        let fichiers = req.files.photos;
+        for (let i = 0; i < fichiers.length; i++) {
+          photosPaths.push(fichiers[i].filename);
         }
       }
       try {
+        const tab = JSON.parse(req.body.joursAccueil);
+        // Fonction de comparaison des jours
+        function comparerJours(a, b) {
+          const jours = [
+            "Samedi",
+            "Dimanche",
+            "Lundi",
+            "Mardi",
+            "Mercredi",
+            "Jeudi",
+            "Vendredi",
+          ];
+          return jours.indexOf(a) - jours.indexOf(b);
+        }
+
+        // Trier le tableau des jours d'accueil
+        tab.sort(comparerJours);
         const creche = await Creche.create({
           nom,
           localisation,
           typeAccueil,
-          joursAccueil,
+          joursAccueil: tab,
           typeEtab,
           ageAccueil: {
             ageMin: parseInt(ageMin, 10),
@@ -62,19 +81,19 @@ const ajouterCreche = async (req, res) => {
           num,
           mail,
           description,
+          prix,
           prop: id,
           photos: photosPaths.map((path) => `uploads/${path}`),
-          carteNationale:
-            req.files && req.files.carteNationale
-              ? `uploads/${req.files.carteNationale[0].filename}`
-              : null,
-          agrement:
-            req.files && req.files.agrement
-              ? `uploads/${req.files.agrement[0].filename}`
-              : null,
+          carteNationale: req.files.carteNationale
+            ? `uploads/${req.files.carteNationale[0].filename}`
+            : null,
+          agrement: req.files.agrement
+            ? `uploads/${req.files.agrement[0].filename}`
+            : null,
         });
         pro.creche = creche._id;
         pro.save(pro);
+        //console.log(photosPaths);
         res.status(200).json(creche);
       } catch (error) {
         console.log(error);

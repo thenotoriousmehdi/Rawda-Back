@@ -1,4 +1,4 @@
-onst nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
 exports.sendEmail = async(req, res) => {
     // Get the email data from the request body

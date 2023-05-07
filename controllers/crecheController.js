@@ -11,21 +11,20 @@ const ajouterCreche = async (req, res) => {
   const userMail = localStorage.getItem("key");
   const key = {};
   key.email = userMail;
+  console.log(key);
   const user = await users.findOne(key);
   if (user) {
     const id = user._id;
-    pro = proprio.find({ userID: id }).populate("userID").populate("creche");
-
-    console.log(pro);
+    const pro = await proprio.findOne({ userID: id });
     if (pro) {
-      console.log(req.body);
       const {
         nom,
         localisation,
         typeAccueil,
         joursAccueil,
         typeEtab,
-        ageAccueil,
+        ageMin,
+        ageMax,
         pedagogie,
         langue,
         capacite,
@@ -34,7 +33,6 @@ const ajouterCreche = async (req, res) => {
         num,
         mail,
         description,
-        prop,
       } = req.body;
 
       //Ajouter la creche a la BD
@@ -53,8 +51,8 @@ const ajouterCreche = async (req, res) => {
           joursAccueil,
           typeEtab,
           ageAccueil: {
-            ageMin: ageAccueil,
-            ageMax: undefined,
+            ageMin: parseInt(ageMin, 10),
+            ageMax: parseInt(ageMax, 10),
           },
           pedagogie,
           langue,
@@ -64,9 +62,19 @@ const ajouterCreche = async (req, res) => {
           num,
           mail,
           description,
-          prop,
+          prop: id,
           photos: photosPaths.map((path) => `uploads/${path}`),
+          carteNationale:
+            req.files && req.files.carteNationale
+              ? `uploads/${req.files.carteNationale[0].filename}`
+              : null,
+          agrement:
+            req.files && req.files.agrement
+              ? `uploads/${req.files.agrement[0].filename}`
+              : null,
         });
+        pro.creche = creche._id;
+        pro.save(pro);
         res.status(200).json(creche);
       } catch (error) {
         console.log(error);
@@ -111,7 +119,9 @@ const deleteCreche = async (req, res) => {
 };
 
 const modifyCreche = async (req, res) => {
+  console.log("cc");
   const { id } = req.params;
+  /*
   const userMail = localStorage.getItem("key");
   const key = {};
   key.email = userMail;
@@ -120,6 +130,7 @@ const modifyCreche = async (req, res) => {
     const id = user._id;
     pro = proprio.find({ userID: id }).populate("userID").populate("creche");
     if (pro) {
+      console.log("cc pro");
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error: "pas de telle creche" });
       }
@@ -135,6 +146,17 @@ const modifyCreche = async (req, res) => {
       res.json(creche);
     } else res.status(404).json({ error: "NOT ALLOWED" });
   } else res.status(404).json({ error: "USER NOT FOUND" });
+  */
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "pas de telle creche" });
+  }
+
+  const creche = await Creche.findOneAndUpdate({ _id: id }, { ...req.body });
+
+  if (!creche) {
+    return res.status(400).json({ error: "pas de telle creche" });
+  }
+  res.json(creche);
 };
 
 const home = (req, res) => {
@@ -170,6 +192,7 @@ const infoCreche = async (req, res) => {
 const evaluerCreche = async (req, res) => {
   const { id } = req.params;
   const userMail = localStorage.getItem("key");
+  console.log(userMail);
   const user = await users.findOne({ email: userMail });
   const nom = user.nom + " " + user.prenom;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -178,9 +201,8 @@ const evaluerCreche = async (req, res) => {
   const creche = await Creche.findOne({ _id: id });
 
   let newNote = req.body.note;
-  console.log(newNote);
+  console.log("la note:", newNote);
   const coms = creche.avis.evaluations;
-  console.log(coms.length);
 
   const newEval = {
     nom: nom,

@@ -75,6 +75,10 @@ const crecheSchema = new Schema({
     evaluations: {
       type: [
         {
+          noteIndiv: {
+            type: Number,
+            default: 3,
+          },
           nom: {
             type: String,
           },

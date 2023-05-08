@@ -7,7 +7,7 @@ const {
 
 const router = express.Router();
 
-router.get('/', obtenirNotifsAdm);
-router.post('/', ajouterNotifAdm);
-router.delete('/:notifId', supprimerNotifAdm);
+router.get("/getcreches/:id", obtenirNotifsPropParProp);
+router.post("/prop/:propId", ajouterNotifProp);
+router.delete("/:notifId", supprimerNotifProp);
 module.exports = router;

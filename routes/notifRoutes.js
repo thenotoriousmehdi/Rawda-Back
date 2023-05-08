@@ -1,8 +1,8 @@
 const express = require('express');
 const {
-    obtenirNotifsAdm,
-    ajouterNotifAdm,
-    supprimerNotifAdm
+    obtenirNotifsPropParProp,
+    ajouterNotifProp,
+    supprimerNotifProp
 } = require("../controllers/notifAdmController");
 
 const router = express.Router();

@@ -3,11 +3,11 @@ const {
     obtenirNotifsPropParProp,
     ajouterNotifProp,
     supprimerNotifProp
-} = require("../controllers/notifAdmController");
+} = require("../controllers/notifController");
 
 const router = express.Router();
 
-router.get("/getcreches/:id", obtenirNotifsPropParProp);
-router.post("/prop/:propId", ajouterNotifProp);
-router.delete("/:notifId", supprimerNotifProp);
+router.get('/notification', obtenirNotifsPropParProp);
+router.post('/:propId', ajouterNotifProp);
+router.delete('/:notifId', supprimerNotifProp);
 module.exports = router;

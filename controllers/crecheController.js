@@ -199,12 +199,23 @@ const infoCreche = async (req, res) => {
     return res.status(404).json({ error: "pas de telle creche" });
   }
 
-  const creche = await Creche.findOne({ _id: id });
+  const creche = await Creche.findOne({ _id: id }).lean();
 
   if (!creche) {
     return res.status(400).json({ error: "pas de telle creche" });
   }
-  console.log("creche trouveé !");
+
+  const userDoc = await users
+    .findOne({ _id: creche.prop }, "nom prenom")
+    .lean();
+
+  if (!userDoc) {
+    return res.status(404).json({ error: "pas d'utilisateur trouvé" });
+  }
+
+  creche.prop = `${userDoc.nom} ${userDoc.prenom}`;
+
+  console.log("creche trouvée !");
   res.json(creche);
 };
 

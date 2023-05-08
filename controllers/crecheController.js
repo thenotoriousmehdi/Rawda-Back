@@ -181,7 +181,7 @@ const modifyCreche = async (req, res) => {
 const home = (req, res) => {
   // Récupérer les 7 crèches les mieux notées
   Creche.find()
-    .sort({ "avis.note": -1 })
+    .sort({ "avis.note":- 1 })
     .limit(7)
     .then((creches) => {
       //console.log("7 crèches les mieux notées :", creches);
@@ -224,6 +224,7 @@ const evaluerCreche = async (req, res) => {
   const coms = creche.avis.evaluations;
 
   const newEval = {
+    noteIndiv:newNote,
     nom: nom,
     commentaires: req.body.commentaires,
   };

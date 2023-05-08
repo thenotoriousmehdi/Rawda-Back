@@ -11,7 +11,7 @@ const Parent = require("../models/parentModel");
 const Creche = require("../models/crecheModel");
 const { LocalStorage } = require('node-localstorage');
 const localStorage = new LocalStorage('./localStorage');
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 
 const prendreRendezVous = async(req, res) => {
     const { heure, dateRdv } = req.body;
@@ -33,7 +33,7 @@ const prendreRendezVous = async(req, res) => {
     notif.save(notif);
     await proprietaire.notification.push(notif);
     proprietaire.save(proprietaire);
-    res.status(201).send('Added succesfully');
+    res.status(201).send('Prise de rdv succesfully');
     // const {nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv} = req.body;
 
     /* const transporter = nodemailer.createTransport({
@@ -106,14 +106,14 @@ const reserverPlace = async(req, res) => {
     await parent.save();
 
 
-    res.status(201).send('Added succesfully');
+    res.status(201).send('Prise de rdv succesfully');
 
     /*const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 587,
         auth: {
             user: 'km_serir@esi.dz',
-            pass: '' // a modifier si vous voulez tester (c'est mon mot de passe les gars)
+            pass: 'tezteztez'
         }
     });
     //crechereserver/644d134a3b1dfd9da5d05a23
@@ -133,3 +133,8 @@ const reserverPlace = async(req, res) => {
     }*/
 }
 module.exports = { reserverPlace, prendreRendezVous };
+   
+
+
+
+   

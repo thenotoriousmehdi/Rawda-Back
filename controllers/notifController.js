@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-const Notif = require("../models/notifModel");
 const Proprio = require("../models/proprioModel");
 const { ObjectId } = require("mongodb");
 const User = require("../models/userModel");
+const Notification = require("../models/notifModel");
 
 // Récupérer les notifications propriétaire pour un propriétaire donné
 const obtenirNotifsPropParProp = async (req, res) => {
@@ -23,14 +23,14 @@ const obtenirNotifsPropParProp = async (req, res) => {
     console.log("proprio found");
   }
   // récupérer l'ID du propriétaire à partir des paramètres de requête
-  const notifs = proprietaire.notification;
+  const notifs = await Notification.find({ proprietaire: proprietaire._id });
   if (!notifs) {
     console.log("notifs not found");
     return;
   } else {
     console.log("notifs found");
   }
-  console.log(notifs);
+
   res.status(201).send(notifs);
 };
 //ramener l'id de la creche courante, ensuite ramener l'id du proprietaire
@@ -48,8 +48,8 @@ const ajouterNotifProp = async (req, res) => {
     heure,
     dateRdv,
   } = req.body;
-  const proprietaire = req.params.propId; // récupérer l'ID du propriétaire à partir des paramètres de requête
-
+  const proprietaire = new ObjectId(req.params.propId); // récupérer l'ID du propriétaire à partir des paramètres de requête
+  const proprio = await Proprio.findById(proprietaire);
   const notif = await new Notif({
     nomParent,
     prenomParent,
@@ -62,9 +62,8 @@ const ajouterNotifProp = async (req, res) => {
     dateRdv,
     proprietaire,
   });
-
+  console.log(notif);
   notif.save(notif);
-
   return res.status(201).json(notif);
 };
 

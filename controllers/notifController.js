@@ -7,39 +7,39 @@ const User = require("../models/userModel");
 // Récupérer les notifications propriétaire pour un propriétaire donné
 const obtenirNotifsPropParProp = async(req, res) => {
     //const userMail = localStorage.getItem('key');
+    //const user = await users.findOne({email : userMail});
+    //const proprietaire = await Proprio.findOne({userID: user._id});
     const userId = new ObjectId(req.params.id);
     const user = await User.findById(userId);
     if (!user) {
-        res.send("User not found");
+        console.log("User not found");
         return;
     } else {
-        res.send("User found");
+        console.log("User found");
     }
-
-
     const proprietaire = await Proprio.findOne({ userID: user._id });
     if (!proprietaire) {
-        res.send("proprio not found");
+        console.log("proprio not found");
         return;
     } else {
-        res.send("proprio found");
+        console.log("proprio found");
     }
-    // récupérer l'ID du propriétaire à partir des paramètres de requête
+    
     const notifs = proprietaire.notification;
     if (!notifs) {
-        res.send("notifs not found");
+        console.log("notifs not found");
         return;
     } else {
-        res.send("notifs found");
+        console.log("notifs found");
     }
-    res.status(201).json(notifs);
+    return res.status(201).json(notifs);
 };
 //ramener l'id de la creche courante, ensuite ramener l'id du proprietaire
 //l 'email de parent aussi 
 //si accepte ou refuse on envoie un email au parent en utilisant le champ email dans notif
 const ajouterNotifProp = async(req, res) => {
     const { nomParent, prenomParent, emailParent, nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv } = req.body;
-    const proprietaire = req.params.propId; // récupérer l'ID du propriétaire à partir des paramètres de requête
+    const proprietaire = new ObjectId(req.params.propId); // récupérer l'ID du propriétaire à partir des paramètres de requête
 
     const notif = await new Notif({
         nomParent,
@@ -53,8 +53,12 @@ const ajouterNotifProp = async(req, res) => {
         dateRdv,
         proprietaire
     });
+    const prop = await Proprio.findById(proprietaire);
 
     notif.save(notif);
+    prop.notification.push(notif);
+    console.log(prop.notification);
+    prop.save(prop);
 
     return res.status(201).json(notif);
 };

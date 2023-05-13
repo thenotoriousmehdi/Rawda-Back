@@ -24,25 +24,25 @@ let user = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ["parent", "proprio","admin"],
+    enum: ["parent", "proprio", "admin"],
     required: [true, "champs oblogatoire"],
   },
-  phone:{
-    type: String ,
-    default:"00-00000000"
-  },
-  adress:{
+  phone: {
     type: String,
-    default:"",
+    default: "00-00000000",
   },
-  photo:{
-    type:String,
-    default:""
-  },
-  dateNaissance:{
+  adress: {
     type: String,
-    default: '0000-00-00',
-  }
+    default: "",
+  },
+  photo: {
+    type: String,
+    default: "",
+  },
+  dateNaissance: {
+    type: String,
+    default: "0000-00-00",
+  },
 });
 
 user.statics.login = async function (email, password) {
@@ -64,7 +64,4 @@ user.pre("save", async function (next) {
   next();
 });
 
-const USERS = mongoose.model("USERS", user);
-// Creation d'index pour le champ email
-
-module.exports = USERS;
+module.exports = mongoose.model("users", user);

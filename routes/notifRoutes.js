@@ -8,10 +8,10 @@ const {
 } = require("../controllers/notifController");
 
 const router = express.Router();
-
-router.get('/notifs/get/:userId', obtenirNotifsPropParProp);
+router.get('/notifs/get/', obtenirNotifsPropParProp);
 router.post('/notifs/post/:propId', ajouterNotifProp);
 router.delete('/notifs/delete/:notifId', supprimerNotifProp);
 module.exports = router;
+
 
 

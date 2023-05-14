@@ -32,7 +32,9 @@ const obtenirNotifsPropParProp = async(req, res) => {
     } else {
         console.log("notifs found");
     }
-    return res.status(201).json(notifs);
+    const mesNotifs = await Notif.find({ _id: { $in: notifs } });
+    return res.status(201).json(mesNotifs);
+   
 };
 //ramener l'id de la creche courante, ensuite ramener l'id du proprietaire
 //l 'email de parent aussi 

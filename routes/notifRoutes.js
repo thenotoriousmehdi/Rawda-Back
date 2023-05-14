@@ -1,4 +1,6 @@
 const express = require('express');
+
+const express = require('express');
 const {
     obtenirNotifsPropParProp,
     ajouterNotifProp,
@@ -7,7 +9,9 @@ const {
 
 const router = express.Router();
 
-router.get('/notification', obtenirNotifsPropParProp);
-router.post('/:propId', ajouterNotifProp);
-router.delete('/:notifId', supprimerNotifProp);
+router.get('/notifs/get/:userId', obtenirNotifsPropParProp);
+router.post('/notifs/post/:propId', ajouterNotifProp);
+router.delete('/notifs/delete/:notifId', supprimerNotifProp);
 module.exports = router;
+
+

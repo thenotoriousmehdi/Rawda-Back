@@ -10,18 +10,19 @@ const Proprio = require("../models/proprioModel");
 const Parent = require("../models/parentModel");
 const Creche = require("../models/crecheModel");
 const { LocalStorage } = require('node-localstorage');
-const localStorage = new LocalStorage('./localStorage');
 const nodemailer = require('nodemailer');
+import localStorage from 'localStorage';
 
 const prendreRendezVous = async(req, res) => {
-    const { heure, dateRdv } = req.body;
+    const { heure, dateRdv } = req.body; // heure et date de rendez-vous 
+    const user = JSON.parse(localStorage.getItem('user'));
+  // Extract the necessary fields from the user object
+    const nomParent = user.nom;
+    const prenomParent = user.prenom;
+    const emailParent = user.email;
     const creche = new ObjectId(req.params.id);
     const proprietaire = await Proprio.findOne({ creche: creche });
-    const userMail = localStorage.getItem('key');
-    const user = await User.findOne({ email: userMail });
-    nomParent = user.nom;
-    prenomParent = user.prenom;
-    emailParent = user.email;
+    //const user = await User.findOne({ email: userMail });
     const notif = await new Notif({
         nomParent,
         prenomParent,
@@ -41,7 +42,7 @@ const prendreRendezVous = async(req, res) => {
          port: 587,
          auth: {
              user: 'km_serir@esi.dz',
-             pass: 'tezteztez'
+             pass: ''
          }
      });
 
@@ -66,8 +67,7 @@ const reserverPlace = async(req, res) => {
     const { nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv } = req.body;
     const creche = new ObjectId(req.params.id);
     const proprietaire = await Proprio.findOne({ creche: creche });
-    const userMail = localStorage.getItem('key');
-    const user = await User.findOne({ email: userMail });
+    const user = JSON.parse(localStorage.getItem('user'));
     nomParent = user.nom;
     prenomParent = user.prenom;
     emailParent = user.email;
@@ -113,7 +113,7 @@ const reserverPlace = async(req, res) => {
         port: 587,
         auth: {
             user: 'km_serir@esi.dz',
-            pass: 'tezteztez'
+            pass: ''
         }
     });
     //crechereserver/644d134a3b1dfd9da5d05a23

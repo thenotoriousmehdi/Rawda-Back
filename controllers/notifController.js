@@ -9,8 +9,9 @@ const obtenirNotifsPropParProp = async(req, res) => {
     //const userMail = localStorage.getItem('key');
     //const user = await users.findOne({email : userMail});
     //const proprietaire = await Proprio.findOne({userID: user._id});
-    const userId = new ObjectId(req.params.id);
-    const user = await User.findById(userId);
+    const user = JSON.parse(localStorage.getItem('user'));
+    //const userId = new ObjectId(req.params.userId);
+   // const user = await User.findById(userId);
     if (!user) {
         console.log("User not found");
         return;

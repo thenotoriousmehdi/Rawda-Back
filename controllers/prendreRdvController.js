@@ -11,7 +11,7 @@ const Parent = require("../models/parentModel");
 const Creche = require("../models/crecheModel");
 const { LocalStorage } = require('node-localstorage');
 const nodemailer = require('nodemailer');
-import localStorage from 'localStorage';
+//import localStorage from 'localStorage';
 
 const prendreRendezVous = async(req, res) => {
     const { heure, dateRdv } = req.body; // heure et date de rendez-vous 

@@ -83,7 +83,7 @@ exports.login_post = async (req, res) => {
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
       key = user.email;
       localStorage.setItem("key", user.email);
-      res.json({ token: token, key: key });
+      res.json({ token: token, key: key, role: user.role });
     } else {
       res.log("NOT TROUVE");
     }

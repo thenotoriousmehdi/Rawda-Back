@@ -47,6 +47,7 @@ let user = new mongoose.Schema({
 
 user.statics.login = async function (email, password) {
   const user = await this.findOne({ email });
+
   if (user) {
     console.log("EMAIL TROUVE");
     const dec = bcrypt.compareSync(password, user.password);

@@ -12,6 +12,3 @@ router.get('/notifs/get/', obtenirNotifsPropParProp);
 router.post('/notifs/post/:propId', ajouterNotifProp);
 router.delete('/notifs/delete/:notifId', supprimerNotifProp);
 module.exports = router;
-
-
-

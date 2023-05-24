@@ -11,12 +11,12 @@ const Parent = require("../models/parentModel");
 const Creche = require("../models/crecheModel");
 const { LocalStorage } = require('node-localstorage');
 const nodemailer = require('nodemailer');
-//import localStorage from 'localStorage';
+
 
 const prendreRendezVous = async(req, res) => {
     const { heure, dateRdv } = req.body; // heure et date de rendez-vous 
     const user = JSON.parse(localStorage.getItem('user'));
-  // Extract the necessary fields from the user object
+    // Extract the necessary fields from the user object
     const nomParent = user.nom;
     const prenomParent = user.prenom;
     const emailParent = user.email;
@@ -133,8 +133,3 @@ const reserverPlace = async(req, res) => {
     }*/
 }
 module.exports = { reserverPlace, prendreRendezVous };
-   
-
-
-
-   

@@ -6,12 +6,12 @@ const Proprio = require('../models/proprioModel');
 const User = require('../models/userModel');
 const Parent = require("../models/parentModel");
 
+
 const { reserverPlace, prendreRendezVous } = require("../controllers/prendreRdvController");
 
 
 const router = express.Router();
 
 router.post('/crechereserver/:id', reserverPlace);
-router.post('/crecherdv/:id', prendreRendezVous);
-
+router.post('/crecherdv/', prendreRendezVous);
 module.exports = router;

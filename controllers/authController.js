@@ -1,4 +1,4 @@
-const users = require('../Models/UserModel');
+const users = require("../models/userModel");
 const parent = require('../models/parentModel');
 const proprio = require('../models/proprioModel');
 const creches = require('../models/crecheModel');

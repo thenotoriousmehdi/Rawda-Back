@@ -1,6 +1,9 @@
 const express = require('express');
 const Parent = require('../models/parentModel');
 const Enfant = require('../models/enfantModel');
+const ac = require("../middleware/accessControl");
+const { isAuthentificated } = require("../middleware/auth");
+
 
 
 const {
@@ -11,7 +14,6 @@ const {
 
 const router = express.Router();
 
-router.post('/', addEnfantToParent);
-router.post('/', ajouterParent);
-router.delete('/', obtenirTousLesParents);
+router.post('/',isAuthentificated,ac.createEnfantsPermission,addEnfantToParent);
+router.get('/',isAuthentificated,obtenirTousLesParents);
 module.exports = router;

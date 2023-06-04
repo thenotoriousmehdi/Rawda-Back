@@ -1,4 +1,7 @@
 const accessControl = require("accesscontrol");
+const { LocalStorage } = require('node-localstorage');
+
+const localStorage = new LocalStorage('./localStorage');
 
 const ac = new accessControl();
 
@@ -39,7 +42,7 @@ ac.grant('admin')
   .readAny('users')
   .createAny('users');
 
-exports.createPCrechePermission = (req, res, next) => {
+module.exports.createPCrechePermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).createOwn('creches');
     if (permission.granted) {
@@ -49,7 +52,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.modifierUser = ( req , res , next )=>{
+  module.exports.modifierUser = ( req , res , next )=>{
     const role =localStorage.getItem('role');
     const permission = ac.can(role).updateOwn('users');
     if (permission.granted) {
@@ -59,10 +62,10 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.lireProfile =(req , res , next)=>{
+  module.exports.lireProfile =(req , res , next)=>{
     const role =localStorage.getItem('role');
     const permission = ac.can(role).readOwn('users');
-    if (permission.granted) {s
+    if (permission.granted) {
       next();
     } else {
       res.status(401).json({ message: 'Vous n\'avez pas la permission de modifier un profile.' });
@@ -70,7 +73,7 @@ exports.createPCrechePermission = (req, res, next) => {
   };
   
 
-  exports.lireCrechePermission = (req, res, next) => {
+  module.exports.lireCrechePermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).readAny('creches');
     if (permission.granted) {
@@ -80,7 +83,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.modifierCrechePermission = (req, res, next) => {
+ module.exports.modifierCrechePermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).updateOwn('creches');
     if (permission.granted) {
@@ -90,7 +93,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.createCrechePermission = (req, res, next) => {
+  module.exports.createCrechePermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).createOwn('creches');
     if (permission.granted) {
@@ -100,7 +103,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.createEnfantsPermission = (req, res, next) => {
+  module.exports.createEnfantsPermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).createOwn('enfants');
     if (permission.granted) {
@@ -112,7 +115,7 @@ exports.createPCrechePermission = (req, res, next) => {
 
   
 
-  exports.lireEnfantsPermission = (req, res, next) => {
+  module.exports.lireEnfantsPermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).createOwn('enfants');
     if (permission.granted) {
@@ -122,7 +125,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.modifierEnfantPermission = (req, res, next) => {
+  module.exports.modifierEnfantPermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).createOwn('enfants');
     if (permission.granted) {
@@ -131,7 +134,7 @@ exports.createPCrechePermission = (req, res, next) => {
       res.status(401).json({ message: 'Vous n\'avez pas la permission de créer un document.' });
     }
   };
-  exports.deleteEnfantPermission = (req, res, next) => {
+  module.exports.deleteEnfantPermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).deleteAny('enfant');
     if (permission.granted) {
@@ -141,7 +144,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.modifierParentsPermission = (req, res, next) => {
+  module.exports.modifierParentsPermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).updateOwn('parents');
     if (permission.granted) {
@@ -151,7 +154,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.lireParentsPermission = (req, res, next) => {
+  module.exports.lireParentsPermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).createOwn('parents');
     if (permission.granted) {
@@ -162,7 +165,7 @@ exports.createPCrechePermission = (req, res, next) => {
   };
 
 
-  exports.getCrechePermission = (req, res, next) => {
+ module.exports.getCrechePermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).readOwn('parents');
     if (permission.granted) {
@@ -172,7 +175,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.ModifierPropPermission = (req, res, next) => {
+  module.exports.ModifierPropPermission = (req, res, next) => {
     const role =localStorage.getItem('role');
     const permission = ac.can(role).updateOwn('parents');
     if (permission.granted) {
@@ -182,7 +185,7 @@ exports.createPCrechePermission = (req, res, next) => {
     }
   };
 
-  exports.SupprimerCreche =(req , res , next)=>{
+  module.exports.SupprimerCreche =(req , res , next)=>{
     const role =localStorage.getItem('role');
     const permission = ac.can(role).deleteOwn('creches');
     if (permission.granted) {
@@ -191,3 +194,5 @@ exports.createPCrechePermission = (req, res, next) => {
       res.status(401).json({ message: 'Vous n\'avez pas la permission de créer un document.' });
     }
   };
+
+ 

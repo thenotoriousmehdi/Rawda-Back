@@ -3,8 +3,9 @@ const { LocalStorage } = require('node-localstorage');
 const jwt = require('jsonwebtoken');
 const localStorage = new LocalStorage('./localStorage');
 
-exports.isAuthentificated = async (req , res , next)=>{
+module.exports.isAuthentificated = async (req , res , next)=>{
      const token= localStorage.getItem('token');
+     console.log(token);
     
     if(!token){
         

@@ -15,10 +15,11 @@ const {
 
 const router = express.Router();
 
-router.get("/Creche", isAuthentificated ,ac.lireCrechePermission,getCreches);
+router.get("/Creche",getCreches);
 
 router.post(
   "/Creche",isAuthentificated,
+  ac.createCrechePermission,
   upload.fields([
     { name: "photos", maxCount: 10 },
     { name: "carteNationale", maxCount: 1 },
@@ -31,7 +32,7 @@ router.delete("/Creche/:id", isAuthentificated,ac.SupprimerCreche, deleteCreche)
 
 router.patch("/Creche/:id",isAuthentificated ,ac.modifierCrechePermission, modifyCreche);
 
-router.get("/Creche/:id",ac.lireCrechePermission ,infoCreche);
+router.get("/Creche/:id" ,infoCreche);
 
 router.get("/Home", home);
 

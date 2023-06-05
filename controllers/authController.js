@@ -2,6 +2,7 @@ const users = require("../models/userModel");
 const parent = require('../models/parentModel');
 const proprio = require('../models/proprioModel');
 const creches = require('../models/crecheModel');
+const Dashboard = require("../models/dashModel");
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const can = require
@@ -54,10 +55,10 @@ exports.signup_post = async (req , res)=>{
        
     }
     res.cookie('jwt' , token , { httpOnly: true , maxAge: maxAge * 1000});
-    res.status(201).json(user)  ;
-    res.json({token : token , 
+    res.status(201).json({token : token , 
         key : key ,
-        role : user.role});
+        role : user.role});  ;
+    
     }}
     catch (err)
     {
@@ -76,6 +77,7 @@ exports.login_post = async(req , res)=>{
     if (user){
         res.status(202); 
         const token = createToken(user.email);
+        localStorage.setItem('token',token);
         localStorage.setItem('role',user.role);
         res.cookie('jwt' , token , { httpOnly: true , maxAge: maxAge * 1000});   
         key = user.email;
@@ -92,111 +94,137 @@ exports.login_post = async(req , res)=>{
     }
    
 }
-
 exports.documents_post = async (req, res) => {
-  try {
-    console.log(req.body);
-    const filtre = {};
-    if (req.body.nom) {
-      /* let nom = req.body.nom;
-      const trimmedSearchString = nom.trim();
-      nom = trimmedSearchString;
-      const crecheDoc = await creches.find({ $text: { $search: nom } });
-      res.status(200).json({
-        status: "success",
-        results: crecheDoc.length,
-        data: {
-          crecheDoc,
-        },
-      });*/
-      const regex = new RegExp(req.body.nom, "i"); // 'i' pour la recherche insensible à la casse
-      const crecheDoc = await creches
-        .find({
-          $or: [
-            { nom: { $regex: regex } },
-            { localisation: { $regex: regex } },
-            { typeAccueil: { $regex: regex } },
-            { typeEtab: { $regex: regex } },
-            { pedagogie: { $regex: regex } },
-            { langue: { $regex: regex } },
-            { description: { $regex: regex } },
-          ],
-        })
-        .sort({ "avis.note": -1 });
-
-      res.status(200).json({
-        status: "success",
-        results: crecheDoc.length,
-        data: {
-          creche: crecheDoc,
-        },
-      });
-    } else {
-      if (req.body.Wilaya) {
-        const wilaya = req.body.Wilaya;
-        if (req.body.commune) {
-          const commune = req.body.commune;
-          filtre.localisation = {
-            $regex: `${commune},${wilaya}`,
-            $options: "i",
-          };
+    try {
+      console.log(req.body);
+      const filtre = {};
+      if (req.body.nom) {
+        const dash = await Dashboard.findOne({});
+        if (dash) {
+          const termesRecherches = dash.termesRecherches;
+  
+          // Rechercher si le mot existe déjà dans le tableau
+          const existingTerm = termesRecherches.find(
+            (term) => term.mot === req.body.nom
+          );
+          if (existingTerm) {
+            // Incrémenter l'occurrence si le mot existe déjà
+            existingTerm.occurence++;
+          } else {
+            // Insérer le nouveau mot avec une occurrence de 1
+            termesRecherches.push({ mot: req.body.nom, occurrence: 1 });
+          }
+  
+          // Trier le tableau selon les occurrences
+          termesRecherches.sort((a, b) => b.occurrence - a.occurrence);
+          dash.nbRecherches++;
+          // Mettre à jour le document du tableau de bord avec les modifications
+          await dash.save();
+          console.log(termesRecherches);
+  
+          console.log("Mise à jour du tableau de bord effectuée avec succès.");
         } else {
-          filtre.localisation = { $regex: `,${wilaya}`, $options: "i" };
+          console.log("Aucun document de tableau de bord trouvé.");
         }
+  
+        /* let nom = req.body.nom;
+        const trimmedSearchString = nom.trim();
+        nom = trimmedSearchString;
+        const crecheDoc = await creches.find({ $text: { $search: nom } });
+        res.status(200).json({
+          status: "success",
+          results: crecheDoc.length,
+          data: {
+            crecheDoc,
+          },
+        });*/
+        const regex = new RegExp(req.body.nom, "i"); // 'i' pour la recherche insensible à la casse
+        const crecheDoc = await creches
+          .find({
+            $or: [
+              { nom: { $regex: regex } },
+              { localisation: { $regex: regex } },
+              { typeAccueil: { $regex: regex } },
+              { typeEtab: { $regex: regex } },
+              { pedagogie: { $regex: regex } },
+              { langue: { $regex: regex } },
+              { description: { $regex: regex } },
+            ],
+          })
+          .sort({ "avis.note": -1 });
+  
+        res.status(200).json({
+          status: "success",
+          results: crecheDoc.length,
+          data: {
+            creche: crecheDoc,
+          },
+        });
+      } else {
+        if (req.body.Wilaya) {
+          const wilaya = req.body.Wilaya;
+          if (req.body.commune) {
+            const commune = req.body.commune;
+            filtre.localisation = {
+              $regex: `${commune},${wilaya}`,
+              $options: "i",
+            };
+          } else {
+            filtre.localisation = { $regex: `,${wilaya}`, $options: "i" };
+          }
+        }
+        if (req.body.typeEtab) {
+          filtre.typeEtab = req.body.typeEtab;
+        }
+        if (req.body.typeAccueil) {
+          filtre.typeAccueil = req.body.typeAccueil;
+        }
+        if (req.body.ageAccueil) {
+          const age = parseInt(req.body.ageAccueil);
+          filtre["ageAccueil.ageMin"] = { $lte: age };
+          filtre["ageAccueil.ageMax"] = { $gte: age };
+        }
+        if (req.body.joursAccueil) {
+          filtre.joursAccueil = { $in: [req.body.joursAccueil] };
+        }
+        if (req.body.capacite) {
+          filtre.capacite = parseInt(req.body.capacite);
+        }
+        if (req.body.pedagogie) {
+          filtre.pedagogie = req.body.pedagogie;
+        }
+        if (req.body.langue) {
+          filtre.langue = req.body.langue;
+        }
+        if (req.body.transport) {
+          filtre.transport = req.body.transport;
+        }
+        if (req.body.alimentation) {
+          filtre.alimentation = req.body.alimentation;
+        }
+        if (req.body.prix) {
+          filtre.prix = { $lte: parseFloat(req.body.prix) };
+        }
+        /**** LE FILTRE **** */
+        console.log("LE FILTRE ");
+        console.log(filtre);
+        /****************** */
+        const creche = await creches.find(filtre).sort({ "avis.note": -1 });
+        res.status(200).json({
+          status: "success",
+          results: creche.length,
+          data: {
+            creche,
+          },
+        });
       }
-      if (req.body.typeEtab) {
-        filtre.typeEtab = req.body.typeEtab;
-      }
-      if (req.body.typeAccueil) {
-        filtre.typeAccueil = req.body.typeAccueil;
-      }
-      if (req.body.ageAccueil) {
-        const age = parseInt(req.body.ageAccueil);
-        filtre["ageAccueil.ageMin"] = { $lte: age };
-        filtre["ageAccueil.ageMax"] = { $gte: age };
-      }
-      if (req.body.joursAccueil) {
-        filtre.joursAccueil = { $in: [req.body.joursAccueil] };
-      }
-      if (req.body.capacite) {
-        filtre.capacite = parseInt(req.body.capacite);
-      }
-      if (req.body.pedagogie) {
-        filtre.pedagogie = req.body.pedagogie;
-      }
-      if (req.body.langue) {
-        filtre.langue = req.body.langue;
-      }
-      if (req.body.transport) {
-        filtre.transport = req.body.transport;
-      }
-      if (req.body.alimentation) {
-        filtre.alimentation = req.body.alimentation;
-      }
-      if (req.body.prix) {
-        filtre.prix = { $lte: parseFloat(req.body.prix) };
-      }
-      /**** LE FILTRE **** */
-      console.log("LE FILTRE ");
-      console.log(filtre);
-      /****************** */
-      const creche = await creches.find(filtre).sort({ "avis.note": -1 });
-      res.status(200).json({
-        status: "success",
-        results: creche.length,
-        data: {
-          creche,
-        },
+    } catch (err) {
+      res.status(404).json({
+        status: "failure",
+        data: {},
       });
     }
-  } catch (err) {
-    res.status(404).json({
-      status: "failure",
-      data: {},
-    });
-  }
-};
-
+  };
 exports.get_profile = async (req, res) => {
     console.log("voir profile");
      const userId = localStorage.getItem("key");
@@ -224,8 +252,7 @@ exports.get_profile = async (req, res) => {
        res.json({});
        console.log("probleme")
      }
-    // localStorage.removeItem("token");
-    // localStorage.removeItem("key");
+    
    };
    
 
@@ -279,4 +306,10 @@ exports.modifPassword = async(req, res) => {
         };
     }else{ res.status(404).json({error:" YOU DONT HAVE THE ACCESS"})};
 };
-            
+        
+exports.logout = (req , res)=>{
+     console.log("LOGOUT");
+     localStorage.removeItem("token");
+     localStorage.removeItem("key");
+     localStorage.removeItem("role");
+}

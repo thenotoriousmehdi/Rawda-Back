@@ -55,6 +55,9 @@ exports.signup_post = async (req , res)=>{
     }
     res.cookie('jwt' , token , { httpOnly: true , maxAge: maxAge * 1000});
     res.status(201).json(user)  ;
+    res.json({token : token , 
+        key : key ,
+        role : user.role});
     }}
     catch (err)
     {
@@ -77,9 +80,10 @@ exports.login_post = async(req , res)=>{
         res.cookie('jwt' , token , { httpOnly: true , maxAge: maxAge * 1000});   
         key = user.email;
         localStorage.setItem('key', user.email);
-        localStorage.setItem('role',role);
+        localStorage.setItem('role',user.role);
         res.json({token : token , 
-                  key : key});
+                  key : key ,
+                  role : user.role});
         
     }
     else{

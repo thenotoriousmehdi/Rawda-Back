@@ -7,7 +7,7 @@ const {
 
 const router = express.Router();
 
-router.get('/', obtenirNotifsAdm);
-router.post('/', ajouterNotifAdm);
+router.get('/notifAdm/get', obtenirNotifsAdm);
+router.post('/notifAdm/add', ajouterNotifAdm);
 router.delete('/:notifId', supprimerNotifAdm);
 module.exports = router;

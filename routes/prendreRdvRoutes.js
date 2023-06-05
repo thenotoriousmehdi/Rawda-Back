@@ -11,6 +11,6 @@ const { reserverPlace, prendreRendezVous } = require("../controllers/prendreRdvC
 
 const router = express.Router();
 
-router.post('/crechereserver/:crecheId', reserverPlace);
-router.post('/crecherdv/:crecheId', prendreRendezVous);
+router.post('/crechereserver/:id', reserverPlace);
+router.post('/crecherdv/:id', prendreRendezVous);
 module.exports = router;

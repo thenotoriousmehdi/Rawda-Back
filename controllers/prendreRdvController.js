@@ -11,28 +11,34 @@ const Parent = require("../models/parentModel");
 const Creche = require("../models/crecheModel");
 const { LocalStorage } = require('node-localstorage');
 const nodemailer = require('nodemailer');
+const localStorage = new LocalStorage("./localStorage");
 
 
 const prendreRendezVous = async(req, res) => {
     const { heure, dateRdv } = req.body; // heure et date de rendez-vous 
-    const user = JSON.parse(localStorage.getItem('user'));
+    const userMail = localStorage.getItem("key");
+    const key = {};
+    key.email = userMail;
+    const user = await User.findOne(key);
     // Extract the necessary fields from the user object
     const nomParent = user.nom;
     const prenomParent = user.prenom;
     const emailParent = user.email;
-    const creche = new ObjectId(req.params.id);
-    const proprietaire = await Proprio.findOne({ creche: creche });
+    const crecheId = req.params.id;
+    const proprietaire = await Proprio.findOne({ creche: crecheId });
     //const user = await User.findOne({ email: userMail });
-    const notif = await new Notif({
-        nomParent,
-        prenomParent,
-        emailParent,
-        heure,
-        dateRdv,
-        proprietaire
+    const notif = new Notif({
+        nomParent: nomParent,
+        prenomParent: prenomParent,
+        emailParent: emailParent,
+        heure: heure,
+        dateRdv: dateRdv,
+        proprietaire: proprietaire,
     });
     notif.save(notif);
-    await proprietaire.notification.push(notif);
+    console.log(notif);
+    proprietaire.notification.push(notif);
+    console.log(proprietaire.notification);
     proprietaire.save(proprietaire);
     res.status(201).send('Prise de rdv succesfully');
     // const {nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv} = req.body;
@@ -64,9 +70,10 @@ const prendreRendezVous = async(req, res) => {
 
 }
 const reserverPlace = async(req, res) => {
-    const { nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv } = req.body;
-    const creche = new ObjectId(req.params.id);
-    const proprietaire = await Proprio.findOne({ creche: creche });
+    const { nomEnfant, prenomEnfant, dateNaissance, dateEntree } = req.body;
+    const crecheId = new ObjectId(req.params.id);
+    const proprietaire = await Proprio.findOne({ creche: crecheId });
+    console.log()
     const user = JSON.parse(localStorage.getItem('user'));
     nomParent = user.nom;
     prenomParent = user.prenom;
@@ -107,29 +114,30 @@ const reserverPlace = async(req, res) => {
 
 
     res.status(201).send('Prise de rdv succesfully');
-
-    /*const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        auth: {
-            user: 'km_serir@esi.dz',
-            pass: ''
-        }
-    });
-    //crechereserver/644d134a3b1dfd9da5d05a23
-    // Set up email options with the dynamic variables
-    const mailOptions = {
-        from: 'km_serir@esi.dz',
-        to: emailParent, //parent de la creche email,
-        subject: `Reponse Rawda`,
-        text: `Bonjour Mr ${nomParent},\nVotre demande a ete accepte pour la date voulue.\nCordialement.\nEquipe Rawda`
-    };
-    try { // Send the email
-        await transporter.sendMail(mailOptions);
-        res.send('Email sent successfully!');
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error sending email');
-    }*/
 }
+
+/*const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    auth: {
+        user: 'km_serir@esi.dz',
+        pass: ''
+    }
+});
+//crechereserver/644d134a3b1dfd9da5d05a23
+// Set up email options with the dynamic variables
+const mailOptions = {
+    from: 'km_serir@esi.dz',
+    to: emailParent, //parent de la creche email,
+    subject: `Reponse Rawda`,
+    text: `Bonjour Mr ${nomParent},\nVotre demande a ete accepte pour la date voulue.\nCordialement.\nEquipe Rawda`
+};
+try { // Send the email
+    await transporter.sendMail(mailOptions);
+    res.send('Email sent successfully!');
+} catch (error) {
+    console.error(error);
+    res.status(500).send('Error sending email');
+}*/
+
 module.exports = { reserverPlace, prendreRendezVous };

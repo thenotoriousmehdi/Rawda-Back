@@ -79,9 +79,7 @@ const crecheSchema = new Schema({
             type: Number,
             default: 3,
           },
-          nom: {
-            type: String,
-          },
+          personne: { type: Schema.Types.ObjectId, ref: "users" },
           commentaires: {
             type: String,
           },

@@ -199,21 +199,13 @@ const infoCreche = async (req, res) => {
     return res.status(404).json({ error: "pas de telle creche" });
   }
 
-  const creche = await Creche.findOne({ _id: id }).lean();
+  const creche = await Creche.findOne({ _id: id })
+    .populate("prop", "nom prenom")
+    .populate("avis.evaluations.personne", "nom prenom photo");
 
   if (!creche) {
     return res.status(400).json({ error: "pas de telle creche" });
   }
-
-  const userDoc = await users
-    .findOne({ _id: creche.prop }, "nom prenom")
-    .lean();
-
-  if (!userDoc) {
-    return res.status(404).json({ error: "pas d'utilisateur trouvé" });
-  }
-
-  creche.prop = `${userDoc.nom} ${userDoc.prenom}`;
 
   console.log("creche trouvée !");
   res.json(creche);
@@ -224,7 +216,6 @@ const evaluerCreche = async (req, res) => {
   const userMail = localStorage.getItem("key");
   console.log(userMail);
   const user = await users.findOne({ email: userMail });
-  const nom = user.nom + " " + user.prenom;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "pas de telle creche" });
   }
@@ -236,7 +227,7 @@ const evaluerCreche = async (req, res) => {
 
   const newEval = {
     noteIndiv: newNote,
-    nom: nom,
+    personne: user._id,
     commentaires: req.body.commentaires,
   };
   newNote = (creche.avis.note * coms.length + newNote) / (coms.length + 1);

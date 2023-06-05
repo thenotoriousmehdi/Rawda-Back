@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
 
-let user = new mongoose.Schema({
+let userSchema = new mongoose.Schema({
   nom: {
     type: String,
   },
@@ -45,24 +45,25 @@ let user = new mongoose.Schema({
   },
 });
 
-user.statics.login = async function (email, password) {
+userSchema.statics.login = async function (email, password) {
+ try{
   const user = await this.findOne({ email });
-
-  if (user) {
-    console.log("EMAIL TROUVE");
+  console.log(user);
     const dec = bcrypt.compareSync(password, user.password);
     if (dec) {
-      return user;
+           console.log(" LOGGED YESS") ;
+            return user;
     }
-    throw Error("ERROR PASSWORD");
   }
-  throw Error(" USER NOT EXISITNG IN RAWDAs DB");
+    catch(e){ console.log(" NOT TROUVE")};
+ 
 };
 
-user.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
-module.exports = mongoose.model("users", user);
+
+module.exports = mongoose.model("users", userSchema);

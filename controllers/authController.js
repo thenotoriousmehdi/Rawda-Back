@@ -69,7 +69,6 @@ exports.signup_post = async (req , res)=>{
 exports.login_post = async(req , res)=>{
     const { email , password} = req.body;
     console.log(req.body);
-    try{
     const user = await users.login( email , password );
     if (user){
         res.status(202); 
@@ -84,16 +83,10 @@ exports.login_post = async(req , res)=>{
         
     }
     else{
-        res.log("NOT TROUVE");
+        res.json({erreur :"NOT TROUVE"});
 
     }
-    }
-    catch(err)
-    {
-        
-        res.status(400).json({ erreur : ' find probleme'});
-
-    }
+   
 }
 exports.documents_post =  async (req, res) => {
    try{
@@ -231,4 +224,3 @@ exports.modifPassword = async(req, res) => {
     }else{ res.status(404).json({error:" YOU DONT HAVE THE ACCESS"})};
 };
             
-

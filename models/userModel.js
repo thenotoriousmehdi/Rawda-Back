@@ -49,11 +49,11 @@ userSchema.statics.login = async function (email, password) {
  try{
   const user = await this.findOne({ email });
   console.log(user);
-    const dec = bcrypt.compareSync(password, user.password);
-    if (dec) {
+   // const dec = bcrypt.compareSync(password, user.password);
+   // if (dec) {
            console.log(" LOGGED YESS") ;
             return user;
-    }
+    //}
   }
     catch(e){ console.log(" NOT TROUVE")};
  

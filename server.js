@@ -4,10 +4,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
+const accessControl = require("./middleware/accessControl");
+const auth = require("./middleware/auth");
 const crecheRoutes = require("./routes/Creche.js");
 const session = require('express-session');
 const rdvRoutes = require("./routes/prendreRdvRoutes");
-const notifRoutes = require("./routes/notifRoutes");
+const dash = require("./routes/dashRoutes")
 //express app
 const app = express();
 
@@ -41,4 +43,4 @@ app.use(crecheRoutes);
 app.use(authRoutes);
 
 app.use(rdvRoutes);
-app.use(notifRoutes);
+app.use(dash);

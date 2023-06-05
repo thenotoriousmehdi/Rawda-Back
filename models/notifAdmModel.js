@@ -12,8 +12,11 @@ const notifSchema = new Schema({
         required: true,
     },
     creche: {
-        type: Schema.Types.ObjectId,
-        ref: "creches",
+        type: String,
+        required: true
+    },
+    emailProprio: {
+        type: String,
         required: true
     }
 }, {

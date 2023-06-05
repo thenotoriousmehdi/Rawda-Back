@@ -16,6 +16,7 @@ const obtenirNotifsPropParProp = async(req, res) => {
         return;
     } else {
         console.log("User found");
+        console.log(user.email);
     }
     const proprietaire = await Proprio.findOne({ userID: user._id });
     if (!proprietaire) {
@@ -24,16 +25,18 @@ const obtenirNotifsPropParProp = async(req, res) => {
     } else {
         console.log("proprio found");
     }
-    const notifs = proprietaire.notification;
+    const notifs = await proprietaire.notification;
     if (!notifs) {
         console.log("notifs not found");
         return;
     } else {
         console.log("notifs found");
+        console.log(notifs);
     }
     const mesNotifs = await Notif.find({ _id: { $in: notifs } });
     return res.status(201).json(mesNotifs);
-   
+
+
 };
 //ramener l'id de la creche courante, ensuite ramener l'id du proprietaire
 //l 'email de parent aussi 
@@ -67,9 +70,11 @@ const ajouterNotifProp = async(req, res) => {
 //11061966
 // Supprimer une notification pour un propriétaire
 const supprimerNotifProp = async(req, res) => {
-    const notifId = req.params.notifId; // récupérer l'ID de la notification à partir des paramètres de requête
-    await Notif.findByIdAndDelete(notifId) // try and catch 
-
+    const { nomParent, prenomParent, emailParent, nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv } = req.body; // récupérer la notification à partir des paramètres de body
+    await Notif.findOneAndDelete({ nomParent: nomParent , prenomParent: prenomParent,
+         emailParent : emailParent, nomEnfant : nomEnfant
+        , prenomEnfant : prenomEnfant, dateNaissance : dateNaissance,
+         dateEntree : dateEntree, heure : heure, dateRdv : dateRdv }); // try and catch 
 
 
     return res.status(200).json({ message: 'Notification supprimée avec succès.' });

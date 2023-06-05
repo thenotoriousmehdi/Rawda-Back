@@ -257,25 +257,41 @@ exports.get_profile = async (req, res) => {
    
 
   
-    exports.modifInfoProfile = async (req,res)=>{
-        const key={};
-       if (req.body.phone){key.phone=req.body.phone;};
-       if(req.body.adress){key.adress=req.body.adress;};
-       if(req.body.dateNaissance){key.dateNaissance=req.body.dateNaissance};
-        const updateInfo=Object.keys(key);
-        const userMail = localStorage.getItem('key');
-        console.log(userMail);
-        /** Voir si il est authentifié **/
-        if (userMail){
-        try{
-        const user = await users.findOne({ email: userMail });
-        updateInfo.forEach(update => user[update]=key[update]);
+   exports.modifInfoProfile = async (req, res) => {
+    const key = {};
+    if (req.body.phone) {
+      key.phone = req.body.phone;
+      console.log(key.phone);
+    }
+    if (req.body.adress) {
+      key.adress = req.body.adress;
+    }
+    if (req.body.dateNaissance) {
+      key.dateNaissance = req.body.dateNaissance;
+    }
+    const updateInfo = Object.keys(key);
+    const userMail = localStorage.getItem("key");
+    console.log(userMail);
+    /** Voir si il est authentifié **/
+    if (userMail) {
+      if (req.files && req.files.photo) {
+        key.photo = `uploads/${req.files.photo[0].filename}`;
+        console.log(key.photo);
+      }
+      try {
+        //updateInfo.forEach((update) => (user[update] = key[update]));
+        const user = await users.findOneAndUpdate(
+          { email: userMail },
+          { ...key }
+        );
         await user.save();
         res.status(200);
-        res.json(user);}
-        catch(err){res.status(404).json(err)};
-        }else res.status(404).json({error: "MODIFICATION NON CONQUISE "});
-        }   
+        res.json(user);
+      } catch (err) {
+        res.status(404).json(err);
+      }
+    } else res.status(404).json({ error: "MODIFICATION NON CONQUISE " });
+  };
 
 exports.modifPassword = async(req, res) => {
     const userMail = localStorage.getItem('key');

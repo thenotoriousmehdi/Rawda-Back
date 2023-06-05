@@ -92,58 +92,110 @@ exports.login_post = async(req , res)=>{
     }
    
 }
-exports.documents_post =  async (req, res) => {
-   try{
+
+exports.documents_post = async (req, res) => {
+  try {
     console.log(req.body);
     const filtre = {};
-    if(req.body.Wilaya){ 
+    if (req.body.nom) {
+      /* let nom = req.body.nom;
+      const trimmedSearchString = nom.trim();
+      nom = trimmedSearchString;
+      const crecheDoc = await creches.find({ $text: { $search: nom } });
+      res.status(200).json({
+        status: "success",
+        results: crecheDoc.length,
+        data: {
+          crecheDoc,
+        },
+      });*/
+      const regex = new RegExp(req.body.nom, "i"); // 'i' pour la recherche insensible à la casse
+      const crecheDoc = await creches
+        .find({
+          $or: [
+            { nom: { $regex: regex } },
+            { localisation: { $regex: regex } },
+            { typeAccueil: { $regex: regex } },
+            { typeEtab: { $regex: regex } },
+            { pedagogie: { $regex: regex } },
+            { langue: { $regex: regex } },
+            { description: { $regex: regex } },
+          ],
+        })
+        .sort({ "avis.note": -1 });
+
+      res.status(200).json({
+        status: "success",
+        results: crecheDoc.length,
+        data: {
+          creche: crecheDoc,
+        },
+      });
+    } else {
+      if (req.body.Wilaya) {
         const wilaya = req.body.Wilaya;
-        if(req.body.commune){
+        if (req.body.commune) {
           const commune = req.body.commune;
-          filtre.localisation = { $regex: `${commune},${wilaya}`, $options: "i" };
+          filtre.localisation = {
+            $regex: `${commune},${wilaya}`,
+            $options: "i",
+          };
         } else {
           filtre.localisation = { $regex: `,${wilaya}`, $options: "i" };
         }
       }
-    if(req.body.nom){ 
-        const nom=req.body.nom
-        const trimmedSearchString = nom.trim();
-        filtre.nom = trimmedSearchString};
-    if(req.body.typeEtab){ filtre.typeEtab = req.body.typeEtab};
-    if(req.body.typeAccueil){ filtre.typeAccueil = req.body.typeAccueil};
-    if(req.body.ageAccueil){
+      if (req.body.typeEtab) {
+        filtre.typeEtab = req.body.typeEtab;
+      }
+      if (req.body.typeAccueil) {
+        filtre.typeAccueil = req.body.typeAccueil;
+      }
+      if (req.body.ageAccueil) {
         const age = parseInt(req.body.ageAccueil);
         filtre["ageAccueil.ageMin"] = { $lte: age };
-        filtre["ageAccueil.ageMax"] = { $gte: age };}
-    if(req.body.joursAccueil){filtre.joursAccueil =  { $in: [req.body.joursAccueil] }};
-    if(req.body.capacite){ filtre.capacite = parseInt(req.body.capacite)};
-    if(req.body.pedagogie){ filtre.pedagogie = req.body.pedagogie};
-    if(req.body.langue){ filtre.langue = req.body.langue};
-    if(req.body.transport){ filtre.transport = req.body.transport};
-    if(req.body.alimentation){ filtre.alimentation = req.body.alimentation};
-    if(req.body.prix){ filtre.prix = {$lte : parseFloat(req.body.prix)}};
-    /**** LE FILTRE **** */
-    console.log("LE FILTRE ");
-    console.log(filtre);
-    /****************** */
-    const creche = await creches.find(filtre);
-    res.status(200).json({
-      status:"success",
-      results: creche.length,
-      data:{
-        creche,
+        filtre["ageAccueil.ageMax"] = { $gte: age };
       }
-    });
-   }
-   catch(err)
-   {
+      if (req.body.joursAccueil) {
+        filtre.joursAccueil = { $in: [req.body.joursAccueil] };
+      }
+      if (req.body.capacite) {
+        filtre.capacite = parseInt(req.body.capacite);
+      }
+      if (req.body.pedagogie) {
+        filtre.pedagogie = req.body.pedagogie;
+      }
+      if (req.body.langue) {
+        filtre.langue = req.body.langue;
+      }
+      if (req.body.transport) {
+        filtre.transport = req.body.transport;
+      }
+      if (req.body.alimentation) {
+        filtre.alimentation = req.body.alimentation;
+      }
+      if (req.body.prix) {
+        filtre.prix = { $lte: parseFloat(req.body.prix) };
+      }
+      /**** LE FILTRE **** */
+      console.log("LE FILTRE ");
+      console.log(filtre);
+      /****************** */
+      const creche = await creches.find(filtre).sort({ "avis.note": -1 });
+      res.status(200).json({
+        status: "success",
+        results: creche.length,
+        data: {
+          creche,
+        },
+      });
+    }
+  } catch (err) {
     res.status(404).json({
-      status:"failure",
-      data:{}
+      status: "failure",
+      data: {},
     });
-   }
-
-}
+  }
+};
 
 exports.get_profile = async (req, res) => {
     console.log("voir profile");

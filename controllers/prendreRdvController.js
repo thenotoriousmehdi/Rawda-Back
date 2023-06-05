@@ -17,15 +17,16 @@ const localStorage = new LocalStorage("./localStorage");
 const prendreRendezVous = async(req, res) => {
     const { heure, dateRdv } = req.body; // heure et date de rendez-vous 
     const userMail = localStorage.getItem("key");
-    const key = {};
+    const key = {} ;
     key.email = userMail;
     const user = await User.findOne(key);
     // Extract the necessary fields from the user object
     const nomParent = user.nom;
     const prenomParent = user.prenom;
     const emailParent = user.email;
-    const crecheId = req.params.id;
-    const proprietaire = await Proprio.findOne({ creche: crecheId });
+    const id = req.params.id;
+    const proprietaire = await Proprio.findOne({ creche: id });
+
     //const user = await User.findOne({ email: userMail });
     const notif = new Notif({
         nomParent: nomParent,
@@ -71,34 +72,35 @@ const prendreRendezVous = async(req, res) => {
 }
 const reserverPlace = async(req, res) => {
     const { nomEnfant, prenomEnfant, dateNaissance, dateEntree } = req.body;
-    const crecheId = new ObjectId(req.params.id);
-    const proprietaire = await Proprio.findOne({ creche: crecheId });
-    console.log()
-    const user = JSON.parse(localStorage.getItem('user'));
-    nomParent = user.nom;
-    prenomParent = user.prenom;
-    emailParent = user.email;
+    const id = req.params.id;
+    const proprietaire = await Proprio.findOne({ creche: id });
+    const userMail = localStorage.getItem("key");
+    const key = {};
+    key.email = userMail;
+    console.log(userMail);
+    const user = await User.findOne(key);
+    const nomParent = user.nom;
+    const prenomParent = user.prenom;
+    const emailParent = user.email;
     const parent = await Parent.findOne({ userID: user._id });
-    const notif = await new Notif({
-        nomParent,
-        prenomParent,
-        emailParent,
-        nomEnfant,
-        prenomEnfant,
-        dateNaissance,
-        dateEntree,
-        heure,
-        dateRdv,
-        proprietaire
+    const notif = new Notif({
+        nomParent: nomParent,
+        prenomParent: prenomParent,
+        emailParent: emailParent,
+        nomEnfant: nomEnfant,
+        prenomEnfant: prenomEnfant,
+        dateNaissance: dateNaissance,
+        dateEntree: dateEntree,
+        proprietaire: proprietaire._id
     });
     notif.save(notif);
     await proprietaire.notification.push(notif);
     proprietaire.save(proprietaire);
-    const enfant = await new Enfant({
-        nomEnfant,
-        prenomEnfant,
-        dateNaissance,
-        creche
+    /*const enfant = new Enfant({
+        nomEnfant : nomEnfant,
+        prenomEnfant : prenomEnfant,
+        dateNaissance : dateNaissance,
+        creche : creche
     })
 
 
@@ -110,10 +112,10 @@ const reserverPlace = async(req, res) => {
     parent.enfant.push(enfant);
 
     // Save the parent with the new enfant
-    await parent.save();
+    await parent.save();*/
 
 
-    res.status(201).send('Prise de rdv succesfully');
+    res.status(201).send('Prise de reservation succesfully');
 }
 
 /*const transporter = nodemailer.createTransport({

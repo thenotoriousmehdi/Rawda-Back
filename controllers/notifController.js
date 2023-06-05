@@ -3,15 +3,14 @@ const Notif = require("../models/notifModel");
 const Proprio = require("../models/proprioModel");
 const { ObjectId } = require("mongodb");
 const User = require("../models/userModel");
-
+const { LocalStorage } = require('node-localstorage');
+const localStorage = new LocalStorage("./localStorage");
 // Récupérer les notifications propriétaire pour un propriétaire donné
 const obtenirNotifsPropParProp = async(req, res) => {
-    //const userMail = localStorage.getItem('key');
-    //const user = await users.findOne({email : userMail});
-    //const proprietaire = await Proprio.findOne({userID: user._id});
-    const user = JSON.parse(localStorage.getItem('user'));
-    //const userId = new ObjectId(req.params.userId);
-   // const user = await User.findById(userId);
+    const userMail = localStorage.getItem("key");
+    const key = {};
+    key.email = userMail;
+    const user = await User.findOne(key);
     if (!user) {
         console.log("User not found");
         return;
@@ -25,7 +24,6 @@ const obtenirNotifsPropParProp = async(req, res) => {
     } else {
         console.log("proprio found");
     }
-    
     const notifs = proprietaire.notification;
     if (!notifs) {
         console.log("notifs not found");

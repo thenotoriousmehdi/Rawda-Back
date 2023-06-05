@@ -9,6 +9,9 @@ const auth = require("./middleware/auth");
 const crecheRoutes = require("./routes/Creche.js");
 const session = require('express-session');
 const rdvRoutes = require("./routes/prendreRdvRoutes");
+const notifRoutes = require("./routes/notifRoutes");
+const emailRoute = require("./routes/emailRoute");
+const notifAdmRoute = require("./routes/notifAdmRoutes");
 const dash = require("./routes/dashRoutes")
 //express app
 const app = express();
@@ -43,4 +46,9 @@ app.use(crecheRoutes);
 app.use(authRoutes);
 
 app.use(rdvRoutes);
+
+
+app.use(notifRoutes);
+app.use(emailRoute);
+app.use(notifAdmRoute);
 app.use(dash);

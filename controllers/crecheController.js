@@ -248,10 +248,13 @@ const evaluerCreche = async (req, res) => {
 const getCrechesParProp = async (req, res) => {
   const propId = req.params.propId;
   const creches = await Creche.find({ prop: propId });
-  res.status(200).json( {creche :creches,
-                          ageMin : creches.ageAccueil.ageMin,
-                          ageMax : creches.ageAccueil.ageMax}
-                          );
+  res
+    .status(200)
+    .json({
+      creche: creches,
+      ageMin: creches.ageAccueil.ageMin,
+      ageMax: creches.ageAccueil.ageMax,
+    });
 };
 
 module.exports = {

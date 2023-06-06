@@ -105,6 +105,12 @@ const ajouterCreche = async (req, res) => {
   } else {
     res.json({ error: "user not found" });
   }
+  try {
+      await axios.post("http://localhost:8000/notifAdm/add", {creche : nom});
+      console.log("notif envoyée avec succès !");
+    }catch (error){
+      console.error("Erreur lors de l'envoi de la notif :", error);
+    }
 };
 
 const getCreches = async (req, res) => {

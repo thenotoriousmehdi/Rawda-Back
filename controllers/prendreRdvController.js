@@ -91,7 +91,7 @@ const reserverPlace = async(req, res) => {
         prenomEnfant: prenomEnfant,
         dateNaissance: dateNaissance,
         dateEntree: dateEntree,
-        proprietaire: proprietaire._id
+        proprietaire: proprietaire
     });
     notif.save(notif);
     await proprietaire.notification.push(notif);

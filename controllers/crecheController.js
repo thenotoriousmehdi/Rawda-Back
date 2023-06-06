@@ -138,7 +138,7 @@ const deleteCreche = async (req, res) => {
 };
 
 const modifyCreche = async (req, res) => {
-  console.log("cc");
+  console.log(req.body);
   const { id } = req.params;
   /*
   const userMail = localStorage.getItem("key");
@@ -248,13 +248,30 @@ const evaluerCreche = async (req, res) => {
 const getCrechesParProp = async (req, res) => {
   const propId = req.params.propId;
   const creches = await Creche.find({ prop: propId });
-  res
-    .status(200)
-    .json({
-      creche: creches,
-      ageMin: creches.ageAccueil.ageMin,
-      ageMax: creches.ageAccueil.ageMax,
-    });
+  res.status(200).json({
+    creche: creches,
+    ageMin: creches.ageAccueil.ageMin,
+    ageMax: creches.ageAccueil.ageMax,
+  });
+};
+
+const rawdati = async (req, res) => {
+  const userId = localStorage.getItem("key");
+  //console.log(userId);
+  const key = {};
+  key.email = userId;
+  const filtre = {};
+  try {
+    const user = await users.findOne(key);
+    const creche = await Creche.findOne({ prop: user._id })
+      .populate("prop", "nom prenom")
+      .populate("avis.evaluations.personne", "nom prenom photo");
+
+    res.json(creche);
+  } catch {
+    res.status(404);
+    console.log("probleme");
+  }
 };
 
 module.exports = {
@@ -266,4 +283,5 @@ module.exports = {
   infoCreche,
   evaluerCreche,
   getCrechesParProp,
+  rawdati,
 };

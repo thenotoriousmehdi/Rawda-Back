@@ -1,6 +1,6 @@
 const express = require("express");
 const upload = require("../middleware/upload");
-const { isAuthentificated} = require("../middleware/auth");
+const { isAuthentificated } = require("../middleware/auth");
 const ac = require("../middleware/accessControl");
 
 const {
@@ -11,14 +11,16 @@ const {
   home,
   infoCreche,
   evaluerCreche,
+  rawdati,
 } = require("../controllers/crecheController");
 
 const router = express.Router();
 
-router.get("/Creche",getCreches);
+router.get("/Creche", getCreches);
 
 router.post(
-  "/Creche",isAuthentificated,
+  "/Creche",
+  isAuthentificated,
   ac.createCrechePermission,
   upload.fields([
     { name: "photos", maxCount: 10 },
@@ -28,14 +30,27 @@ router.post(
   ajouterCreche
 );
 
-router.delete("/Creche/:id", isAuthentificated,ac.SupprimerCreche, deleteCreche);
+router.delete(
+  "/Creche/:id",
+  isAuthentificated,
+  ac.SupprimerCreche,
+  deleteCreche
+);
 
-router.patch("/Creche/:id",isAuthentificated ,ac.modifierCrechePermission, modifyCreche);
+router.patch(
+  "/Creche/:id",
+  isAuthentificated,
+  ac.modifierCrechePermission,
+  upload.fields([{ name: "photos", maxCount: 10 }]),
+  modifyCreche
+);
 
-router.get("/Creche/:id" ,infoCreche);
+router.get("/Creche/:id", infoCreche);
 
 router.get("/Home", home);
 
-router.patch("/evaluerCreche/:id", isAuthentificated ,evaluerCreche);
+router.patch("/evaluerCreche/:id", isAuthentificated, evaluerCreche);
+
+router.get("/Rawdati", rawdati);
 
 module.exports = router;

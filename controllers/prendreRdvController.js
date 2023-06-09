@@ -42,7 +42,7 @@ const prendreRendezVous = async(req, res) => {
     console.log(proprietaire.notification);
     proprietaire.save(proprietaire);
     res.status(201).send('Prise de rdv succesfully');
-    // const {nomEnfant, prenomEnfant, dateNaissance, dateEntree, heure, dateRdv} = req.body;
+   
 
     /* const transporter = nodemailer.createTransport({
          host: 'smtp.gmail.com',
